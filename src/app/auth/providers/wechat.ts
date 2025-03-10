@@ -1,4 +1,4 @@
-import type { OAuthConfig, OAuthUserConfig } from "next-auth/providers";
+import { type OAuthConfig, type OAuthUserConfig } from "next-auth/providers/oauth";
 
 interface WeChatProfile {
   openid: string;
@@ -25,7 +25,7 @@ export default function WeChatProvider<P extends WeChatProfile>(
       url: "https://open.weixin.qq.com/connect/qrconnect",
       params: {
         appid: options.clientId,
-        redirect_uri: options.callbackUrl,
+        redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/wechat`,
         response_type: "code",
         scope: "snsapi_login",
       },
