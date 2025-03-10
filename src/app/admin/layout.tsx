@@ -1,14 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "../lib/utils";
+import {
+  LayoutDashboard,
+  ShieldAlert,
+  Users,
+  BarChart3,
+  Menu,
+  X,
+  Bell,
+  Search,
+  Settings,
+  LogOut,
+  Moon,
+  Sun,
+} from "lucide-react";
+import { Button } from "../components/ui/button";
 
 const navItems = [
-  { name: "Dashboard", href: "/admin/dashboard" },
-  { name: "Content Moderation", href: "/admin/content-moderation" },
-  { name: "User Management", href: "/admin/user-management" },
-  { name: "Analytics", href: "/admin/analytics" },
+  { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { name: "Content Moderation", href: "/admin/content-moderation", icon: ShieldAlert },
+  { name: "User Management", href: "/admin/user-management", icon: Users },
+  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
 ];
 
 export default function AdminLayout({
@@ -18,89 +34,154 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Toggle dark mode
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background">
       {/* Top Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <button
-                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className="mr-4 text-gray-500 focus:outline-none focus:text-gray-700"
-                >
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                </button>
-                <Link href="/admin/dashboard" className="text-xl font-bold text-indigo-600">
-                  CalTrade Admin
-                </Link>
-              </div>
+      <header className="sticky top-0 z-40 border-b bg-background">
+        <div className="flex h-16 items-center px-4 md:px-6">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="md:hidden"
+            >
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+            <Link href="/admin/dashboard" className="flex items-center gap-2">
+              <span className="text-xl font-bold text-primary">CalTrade</span>
+              <span className="text-sm font-medium text-muted-foreground">Admin</span>
+            </Link>
+          </div>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="relative hidden md:flex">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <input
+                type="search"
+                placeholder="Search..."
+                className="rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              />
             </div>
-            <div className="flex items-center">
-              <div className="ml-3 relative">
-                <div className="flex items-center">
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src="/mock/users/admin.jpg"
-                    alt="Admin user"
-                  />
-                  <span className="ml-2 text-gray-700">Admin User</span>
-                </div>
-              </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="text-muted-foreground"
+            >
+              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+            <Button variant="ghost" size="icon" className="relative text-muted-foreground">
+              <Bell className="h-5 w-5" />
+              <span className="sr-only">Notifications</span>
+              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
+            </Button>
+            <div className="relative">
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <img
+                  src="/mock/users/admin.jpg"
+                  alt="Admin user"
+                  className="h-8 w-8 rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.src = `https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff`;
+                  }}
+                />
+                <span className="sr-only">Profile</span>
+              </Button>
             </div>
           </div>
         </div>
-      </nav>
+      </header>
 
       <div className="flex">
         {/* Sidebar */}
-        <div
-          className={`${
-            isSidebarOpen ? "block" : "hidden"
-          } bg-white shadow-md w-64 min-h-screen`}
+        <aside
+          className={cn(
+            "fixed inset-y-0 left-0 z-30 mt-16 w-64 transform border-r bg-background transition-transform duration-300 ease-in-out",
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+            "md:translate-x-0"
+          )}
         >
-          <div className="py-4">
-            <nav>
-              <ul>
-                {navItems.map((item) => (
-                  <li key={item.name}>
+          <div className="flex h-[calc(100vh-4rem)] flex-col">
+            <div className="flex-1 overflow-auto py-4 px-3">
+              <nav className="space-y-1">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
                     <Link
+                      key={item.name}
                       href={item.href}
-                      className={`block py-2 px-4 text-sm ${
-                        pathname === item.href
-                          ? "bg-indigo-50 text-indigo-600 border-l-4 border-indigo-600"
-                          : "text-gray-600 hover:bg-gray-50"
-                      }`}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
                     >
+                      <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground")} />
                       {item.name}
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+                  );
+                })}
+              </nav>
+            </div>
+            <div className="border-t p-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/mock/users/admin.jpg"
+                  alt="Admin user"
+                  className="h-9 w-9 rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.src = `https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff`;
+                  }}
+                />
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-medium">Admin User</p>
+                  <p className="truncate text-xs text-muted-foreground">admin@caltrade.com</p>
+                </div>
+                <Button variant="ghost" size="icon" className="text-muted-foreground">
+                  <Settings className="h-4 w-4" />
+                  <span className="sr-only">Settings</span>
+                </Button>
+                <Button variant="ghost" size="icon" className="text-muted-foreground">
+                  <LogOut className="h-4 w-4" />
+                  <span className="sr-only">Log out</span>
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
+        </aside>
+
+        {/* Mobile sidebar backdrop */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 z-20 bg-black/50 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
         {/* Main Content */}
-        <div className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
+        <main className={cn(
+          "flex-1 overflow-auto transition-all duration-300 ease-in-out",
+          isSidebarOpen ? "md:ml-64" : "md:ml-0"
+        )}>
+          <div className="container mx-auto p-6">
             {children}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
