@@ -5,6 +5,7 @@ import { getToken } from "next-auth/jwt";
 // Paths that don't require authentication
 const publicPaths = [
   "/auth/signin",
+  "/auth/signup",
   "/auth/error",
   "/api/auth/sms",
 ];

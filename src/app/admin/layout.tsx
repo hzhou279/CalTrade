@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { cn } from "../lib/utils";
 import {
   LayoutDashboard,
@@ -33,6 +34,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -44,6 +46,12 @@ export default function AdminLayout({
       document.documentElement.classList.remove("dark");
     }
   }, [isDarkMode]);
+
+  // Handle logout
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/auth/signin");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,6 +95,15 @@ export default function AdminLayout({
               <Bell className="h-5 w-5" />
               <span className="sr-only">Notifications</span>
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="hidden md:flex items-center gap-1 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4 mr-1" />
+              Logout
             </Button>
             <div className="relative">
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -156,7 +173,12 @@ export default function AdminLayout({
                   <Settings className="h-4 w-4" />
                   <span className="sr-only">Settings</span>
                 </Button>
-                <Button variant="ghost" size="icon" className="text-muted-foreground">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-muted-foreground"
+                  onClick={handleLogout}
+                >
                   <LogOut className="h-4 w-4" />
                   <span className="sr-only">Log out</span>
                 </Button>

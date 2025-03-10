@@ -270,3 +270,86 @@ To enhance the admin dashboard, consider:
 - Create additional UI components for forms and data visualization
 
 ## License
+
+This project is licensed under the MIT License.
+
+# CalTrade Admin Dashboard
+
+This is the admin dashboard for the CalTrade application.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or later)
+- pnpm
+
+### Installation
+
+```bash
+# Install dependencies
+pnpm install
+```
+
+### Development
+
+```bash
+# Run the development server
+pnpm run dev
+```
+
+### Production
+
+```bash
+# Build the application
+pnpm run build
+
+# Start the production server
+pnpm run start
+```
+
+## Auto-Compile Scripts
+
+This project includes scripts to automatically rebuild the application when changes are detected.
+
+### Watch and Build
+
+This script watches for file changes and triggers a build when changes are detected:
+
+```bash
+pnpm run watch
+```
+
+### Watch and Serve
+
+This script watches for file changes, triggers a build, and restarts the server when changes are detected:
+
+```bash
+pnpm run watch:serve
+```
+
+### How It Works
+
+The auto-compile scripts use `chokidar` to watch for file changes in the following directories:
+
+- `src/**/*` - All files in the src directory
+- `public/**/*` - All files in the public directory
+- `*.js`, `*.json`, `*.ts`, `*.tsx` - All JavaScript, JSON, TypeScript, and TSX files in the root directory
+
+When changes are detected, the scripts will:
+
+1. Debounce the changes (wait for 1 second of inactivity)
+2. Kill any existing build process
+3. Run `pnpm run build`
+4. (For watch:serve) Kill any existing server process and start a new one
+
+## Features
+
+- User authentication
+- Content moderation
+- User management
+- Analytics dashboard
+
+## License
+
+This project is licensed under the MIT License.

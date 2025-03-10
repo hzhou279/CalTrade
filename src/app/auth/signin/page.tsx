@@ -43,12 +43,17 @@ export default function SignIn() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Prevent scrolling on the body
-    document.body.style.overflow = "hidden";
+    // Set viewport height for mobile browsers (handles mobile address bar issues)
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    
+    setVh();
+    window.addEventListener('resize', setVh);
     
     return () => {
-      // Re-enable scrolling when component unmounts
-      document.body.style.overflow = "";
+      window.removeEventListener('resize', setVh);
     };
   }, []);
 
@@ -59,6 +64,20 @@ export default function SignIn() {
       }, 100);
     }
   }, [isCodeSent]);
+
+  // Check for email parameter in URL when component mounts
+  useEffect(() => {
+    // Get email from URL query parameter
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get('email');
+    
+    if (emailParam) {
+      // Set email from URL parameter
+      setEmail(emailParam);
+      // Switch to email login method
+      setLoginMethod("email");
+    }
+  }, []);
 
   // Send verification code
   const handleSendCode = async () => {
@@ -162,6 +181,11 @@ export default function SignIn() {
       // Validate email
       emailSchema.parse(email);
       
+      // Validate password (minimum length)
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters long");
+      }
+      
       setIsLoading(true);
       
       // Sign in with email credentials
@@ -178,8 +202,8 @@ export default function SignIn() {
       // Show success state briefly before redirecting
       setIsSuccess(true);
       setTimeout(() => {
-        // Redirect to home page on success
-        router.push("/");
+        // Redirect to admin dashboard for admin users, home page for regular users
+        router.push("/admin/dashboard");
       }, 1500);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -205,15 +229,14 @@ export default function SignIn() {
 
   return (
     <div style={{
-      height: "100vh",
-      width: "100vw",
+      minHeight: "100vh",
+      width: "100%",
       margin: 0,
       padding: 0,
       display: "flex",
       flexDirection: "column",
       background: "linear-gradient(135deg, #4f46e5 0%, #7e22ce 50%, #ec4899 100%)",
-      position: "relative",
-      overflow: "hidden"
+      position: "relative"
     }}>
       {/* Background Decoration */}
       <div style={{
@@ -256,21 +279,22 @@ export default function SignIn() {
       <main style={{
         flex: 1,
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
+        padding: "16px",
         position: "relative",
-        zIndex: 5
+        zIndex: 10,
+        overflowY: "auto"
       }}>
         {/* Card Container */}
         <div style={{
           width: "100%",
-          maxWidth: "400px",
-          margin: "0 16px",
+          maxWidth: "420px",
           backgroundColor: "white",
           borderRadius: "16px",
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
           overflow: "hidden",
-          position: "relative"
+          margin: "auto"
         }}>
           <div style={{ padding: "32px" }}>
             {/* Card Header */}
@@ -570,9 +594,14 @@ export default function SignIn() {
                   </div>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <label htmlFor="password" style={{ fontSize: "14px", fontWeight: 500, color: "#374151" }}>
-                      Password
-                    </label>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <label htmlFor="password" style={{ fontSize: "14px", fontWeight: 500, color: "#374151" }}>
+                        Password
+                      </label>
+                      <a href="#" style={{ fontSize: "14px", color: "#3b82f6", textDecoration: "none" }}>
+                        Forgot password?
+                      </a>
+                    </div>
                     <div style={{ position: "relative" }}>
                       <LockIcon style={{ 
                         position: "absolute", 
@@ -601,18 +630,14 @@ export default function SignIn() {
                           outline: "none"
                         }}
                         required
+                        minLength={6}
                       />
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                      <Link href="/auth/forgot-password" style={{ fontSize: "12px", color: "#3b82f6", textDecoration: "none" }}>
-                        Forgot password?
-                      </Link>
                     </div>
                   </div>
                   
                   <button 
-                    type="submit" 
-                    disabled={isLoading || !email || !password}
+                    type="submit"
+                    disabled={isLoading}
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -623,25 +648,49 @@ export default function SignIn() {
                       borderRadius: "8px",
                       border: "none",
                       boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                      cursor: isLoading || !email || !password ? "not-allowed" : "pointer",
-                      opacity: isLoading || !email || !password ? 0.7 : 1,
+                      cursor: isLoading ? "not-allowed" : "pointer",
                       fontWeight: 500,
-                      height: "44px",
-                      width: "100%"
+                      height: "48px",
+                      width: "100%",
+                      opacity: isLoading ? 0.7 : 1
                     }}
                   >
                     {isLoading ? (
                       <>
-                        <Loader2Icon style={{ marginRight: "8px", width: "20px", height: "20px", animation: "spin 1s linear infinite" }} />
-                        <span>Signing in...</span>
+                        <span style={{ display: "inline-block", width: "16px", height: "16px", borderRadius: "50%", border: "2px solid white", borderTopColor: "transparent", animation: "spin 1s linear infinite", marginRight: "8px" }}></span>
+                        Signing in...
                       </>
                     ) : (
-                      <>
-                        <span>Sign in</span>
-                        <ArrowRightIcon style={{ marginLeft: "8px", width: "20px", height: "20px" }} />
-                      </>
+                      "Sign in"
                     )}
                   </button>
+                  
+                  <div style={{ textAlign: "center", marginTop: "16px" }}>
+                    <span style={{ fontSize: "14px", color: "#6b7280" }}>
+                      Don't have an account?
+                    </span>
+                    <div style={{ marginTop: "12px" }}>
+                      <button 
+                        onClick={() => router.push("/auth/signup")}
+                        style={{ 
+                          display: "inline-block",
+                          width: "100%",
+                          padding: "10px 0",
+                          backgroundColor: "#f3f4f6",
+                          color: "#4f46e5",
+                          fontWeight: "600",
+                          textAlign: "center",
+                          borderRadius: "8px",
+                          border: "2px solid #4f46e5",
+                          textDecoration: "none",
+                          transition: "all 0.2s ease",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Create an Account
+                      </button>
+                    </div>
+                  </div>
                 </form>
               </div>
             )}
@@ -811,32 +860,17 @@ export default function SignIn() {
         </div>
       </main>
       
-      <style jsx global>{`
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-        
-        html, body {
-          margin: 0;
-          padding: 0;
-          overflow: hidden;
-          width: 100%;
-          height: 100%;
-        }
-        
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-          0% { opacity: 1; }
-          50% { opacity: 0.7; }
-          100% { opacity: 1; }
-        }
-      `}</style>
+      {/* Footer */}
+      <footer style={{
+        padding: "16px 24px",
+        textAlign: "center",
+        color: "rgba(255, 255, 255, 0.7)",
+        fontSize: "14px",
+        position: "relative",
+        zIndex: 10
+      }}>
+        &copy; {new Date().getFullYear()} CalTrade. All rights reserved.
+      </footer>
     </div>
   );
 }
@@ -862,4 +896,18 @@ function Slot(props: SlotProps) {
       {props.char !== null && <div>{props.char}</div>}
     </div>
   );
-} 
+}
+
+// Add the animation styles back
+<style jsx global>{`
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+`}</style> 

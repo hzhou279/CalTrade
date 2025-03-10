@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import WeChatProvider from "../../auth/providers/wechat";
 import { z } from "zod";
 import { NextAuthOptions } from "next-auth";
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +16,11 @@ const verificationCodeSchema = z.string().length(6).regex(/^\d+$/);
 
 // Email validation schema
 const emailSchema = z.string().email();
+
+// Password validation schema
+const passwordSchema = z.string().min(6, {
+  message: "Password must be at least 6 characters long",
+});
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -34,8 +39,8 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email) {
-          throw new Error("Email is required");
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
         }
 
         try {
@@ -52,12 +57,15 @@ export const authOptions: NextAuthOptions = {
             });
 
             if (!user) {
+              // Create admin user with hashed password
+              const hashedPassword = await hash(credentials.password, 10);
               user = await prisma.user.create({
                 data: {
                   email: credentials.email,
                   name: "Admin User",
                   emailVerified: new Date(),
                   role: "admin",
+                  password: hashedPassword,
                 },
               });
             } else {
@@ -66,6 +74,15 @@ export const authOptions: NextAuthOptions = {
                 await prisma.user.update({
                   where: { id: user.id },
                   data: { role: "admin" },
+                });
+              }
+              
+              // Update password if it doesn't exist
+              if (!user.password) {
+                const hashedPassword = await hash(credentials.password, 10);
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: { password: hashedPassword },
                 });
               }
             }
@@ -79,9 +96,33 @@ export const authOptions: NextAuthOptions = {
             };
           }
           
-          // For other users, implement proper password checking here
-          // This is just a placeholder for future implementation
-          throw new Error("Invalid credentials");
+          // For regular users, check if the user exists and verify password
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
+          
+          if (!user) {
+            throw new Error("User not found. Please sign up first.");
+          }
+          
+          if (!user.password) {
+            throw new Error("Please use another sign-in method or reset your password.");
+          }
+          
+          // Verify password
+          const isPasswordValid = await compare(credentials.password, user.password);
+          
+          if (!isPasswordValid) {
+            throw new Error("Invalid password. Please try again.");
+          }
+          
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            phone: user.phone,
+            role: user.role || "user",
+          };
         } catch (error) {
           console.error("Email authentication error:", error);
           if (error instanceof z.ZodError) {
