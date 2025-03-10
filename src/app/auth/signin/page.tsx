@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { OTPInput, SlotProps } from "input-otp";
-import { PhoneIcon, ArrowRightIcon, CheckCircleIcon, Loader2Icon } from "lucide-react";
+import { PhoneIcon, ArrowRightIcon, CheckCircleIcon, Loader2Icon, MailIcon, LockIcon } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaWeixin } from "react-icons/fa";
 import { cn } from "../../lib/utils";
@@ -23,15 +23,23 @@ const verificationCodeSchema = z.string().length(6, {
   message: "Verification code must contain only numbers"
 });
 
+// Email validation schema
+const emailSchema = z.string().email({
+  message: "Please enter a valid email address"
+});
+
 export default function SignIn() {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<"phone" | "email">("phone");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -145,6 +153,46 @@ export default function SignIn() {
     }
   };
 
+  // Handle email login
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    
+    try {
+      // Validate email
+      emailSchema.parse(email);
+      
+      setIsLoading(true);
+      
+      // Sign in with email credentials
+      const result = await signIn("email-login", {
+        email,
+        password,
+        redirect: false,
+      });
+      
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      
+      // Show success state briefly before redirecting
+      setIsSuccess(true);
+      setTimeout(() => {
+        // Redirect to home page on success
+        router.push("/");
+      }, 1500);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setError(error.errors[0].message || "Please check your email");
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Authentication failed");
+      }
+      setIsLoading(false);
+    }
+  };
+
   // Handle WeChat login
   const handleWeChatLogin = () => {
     signIn("wechat", { callbackUrl: "/" });
@@ -244,8 +292,46 @@ export default function SignIn() {
               </p>
             </div>
             
+            {/* Login Method Tabs */}
+            <div style={{ 
+              display: "flex", 
+              borderBottom: "1px solid #e5e7eb", 
+              marginBottom: "24px" 
+            }}>
+              <button 
+                onClick={() => setLoginMethod("phone")}
+                style={{
+                  flex: 1,
+                  padding: "12px",
+                  background: "none",
+                  border: "none",
+                  borderBottom: loginMethod === "phone" ? "2px solid #3b82f6" : "none",
+                  color: loginMethod === "phone" ? "#3b82f6" : "#6b7280",
+                  fontWeight: loginMethod === "phone" ? 600 : 400,
+                  cursor: "pointer"
+                }}
+              >
+                Phone
+              </button>
+              <button 
+                onClick={() => setLoginMethod("email")}
+                style={{
+                  flex: 1,
+                  padding: "12px",
+                  background: "none",
+                  border: "none",
+                  borderBottom: loginMethod === "email" ? "2px solid #3b82f6" : "none",
+                  color: loginMethod === "email" ? "#3b82f6" : "#6b7280",
+                  fontWeight: loginMethod === "email" ? 600 : 400,
+                  cursor: "pointer"
+                }}
+              >
+                Email
+              </button>
+            </div>
+            
             {/* Card Content */}
-            {!isCodeSent && !isSuccess && (
+            {loginMethod === "phone" && !isCodeSent && !isSuccess && (
               <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
                 {/* Social Login Buttons */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -394,8 +480,174 @@ export default function SignIn() {
               </div>
             )}
             
+            {/* Email Login Form */}
+            {loginMethod === "email" && !isSuccess && (
+              <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
+                {/* Social Login Buttons */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <button 
+                    onClick={handleGoogleLogin}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f3f4f6",
+                      color: "#374151",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      height: "48px",
+                      width: "100%"
+                    }}
+                  >
+                    <FcGoogle style={{ marginRight: "8px", width: "20px", height: "20px" }} />
+                    <span>Sign in with Google</span>
+                  </button>
+                </div>
+                
+                {/* Divider */}
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div style={{ flex: 1, height: "1px", backgroundColor: "#e5e7eb" }}></div>
+                  <span style={{ color: "#6b7280", fontSize: "14px" }}>or continue with email</span>
+                  <div style={{ flex: 1, height: "1px", backgroundColor: "#e5e7eb" }}></div>
+                </div>
+                
+                {/* Error Message */}
+                {error && (
+                  <div style={{
+                    backgroundColor: "#fee2e2",
+                    border: "1px solid #fecaca",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "12px"
+                  }}>
+                    <span style={{ color: "#ef4444" }}>⚠️</span>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#b91c1c" }}>{error}</p>
+                  </div>
+                )}
+                
+                {/* Email Form */}
+                <form onSubmit={handleEmailLogin} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <label htmlFor="email" style={{ fontSize: "14px", fontWeight: 500, color: "#374151" }}>
+                      Email
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <MailIcon style={{ 
+                        position: "absolute", 
+                        left: "12px", 
+                        top: "50%", 
+                        transform: "translateY(-50%)",
+                        width: "20px",
+                        height: "20px",
+                        color: "#9ca3af"
+                      }} />
+                      <input
+                        id="email"
+                        type="email"
+                        placeholder="admin@caltrade.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        style={{
+                          width: "100%",
+                          boxSizing: "border-box",
+                          height: "44px",
+                          paddingLeft: "40px",
+                          paddingRight: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid #d1d5db",
+                          fontSize: "14px",
+                          outline: "none"
+                        }}
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <label htmlFor="password" style={{ fontSize: "14px", fontWeight: 500, color: "#374151" }}>
+                      Password
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <LockIcon style={{ 
+                        position: "absolute", 
+                        left: "12px", 
+                        top: "50%", 
+                        transform: "translateY(-50%)",
+                        width: "20px",
+                        height: "20px",
+                        color: "#9ca3af"
+                      }} />
+                      <input
+                        id="password"
+                        type="password"
+                        placeholder="Enter password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={{
+                          width: "100%",
+                          boxSizing: "border-box",
+                          height: "44px",
+                          paddingLeft: "40px",
+                          paddingRight: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid #d1d5db",
+                          fontSize: "14px",
+                          outline: "none"
+                        }}
+                        required
+                      />
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <Link href="/auth/forgot-password" style={{ fontSize: "12px", color: "#3b82f6", textDecoration: "none" }}>
+                        Forgot password?
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    type="submit" 
+                    disabled={isLoading || !email || !password}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#3b82f6",
+                      color: "white",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      cursor: isLoading || !email || !password ? "not-allowed" : "pointer",
+                      opacity: isLoading || !email || !password ? 0.7 : 1,
+                      fontWeight: 500,
+                      height: "44px",
+                      width: "100%"
+                    }}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2Icon style={{ marginRight: "8px", width: "20px", height: "20px", animation: "spin 1s linear infinite" }} />
+                        <span>Signing in...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Sign in</span>
+                        <ArrowRightIcon style={{ marginLeft: "8px", width: "20px", height: "20px" }} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
+            
             {/* Verification Code Step */}
-            {isCodeSent && !isSuccess && (
+            {loginMethod === "phone" && isCodeSent && !isSuccess && (
               <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <div style={{ 

@@ -16,6 +16,8 @@ declare module "next-auth" {
       phone?: string | null;
       /** The user's image */
       image?: string | null;
+      /** The user's role */
+      role?: string | null;
     };
   }
 
@@ -25,6 +27,7 @@ declare module "next-auth" {
     email?: string | null;
     phone?: string | null;
     image?: string | null;
+    role?: string | null;
   }
 }
 
@@ -35,5 +38,7 @@ declare module "next-auth/jwt" {
     userId?: string;
     /** The provider used for authentication */
     provider?: string;
+    /** The user's role */
+    role?: string;
   }
 } 
