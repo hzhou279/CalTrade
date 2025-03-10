@@ -4,12 +4,22 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "../../components/ui/button";
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "../../components/ui/card";
+import { Phone, Lock, AlertCircle, Loader2, ArrowRight, MessageSquare } from "lucide-react";
 
 // Phone number validation schema
-const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/);
+const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/, {
+  message: "Please enter a valid phone number (e.g., +1234567890)"
+});
 
 // SMS verification code validation
-const verificationCodeSchema = z.string().length(6).regex(/^\d+$/);
+const verificationCodeSchema = z.string().length(6, {
+  message: "Verification code must be 6 digits"
+}).regex(/^\d+$/, {
+  message: "Verification code must contain only numbers"
+});
 
 export default function SignIn() {
   const router = useRouter();
@@ -18,6 +28,7 @@ export default function SignIn() {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [countdown, setCountdown] = useState(0);
 
   // Send verification code
   const handleSendCode = async () => {
@@ -45,9 +56,22 @@ export default function SignIn() {
       }
       
       setIsCodeSent(true);
+      
+      // Start countdown for resend (60 seconds)
+      setCountdown(60);
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
     } catch (error) {
       if (error instanceof z.ZodError) {
-        setError("Please enter a valid phone number");
+        setError(error.errors[0].message || "Please enter a valid phone number");
       } else if (error instanceof Error) {
         setError(error.message);
       } else {
@@ -85,7 +109,7 @@ export default function SignIn() {
       router.push("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
-        setError("Please check your phone number and verification code");
+        setError(error.errors[0].message || "Please check your phone number and verification code");
       } else if (error instanceof Error) {
         setError(error.message);
       } else {
@@ -101,104 +125,168 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
+    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[hsl(var(--background))]">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-[hsl(var(--primary))]">CalTrade</h1>
+          <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">Your trusted marketplace for secure trading</p>
         </div>
         
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
+        <Card className="w-full shadow-lg border-[hsl(var(--border))]">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-2xl font-bold text-center">Sign in to your account</CardTitle>
+            <CardDescription className="text-center text-[hsl(var(--muted-foreground))]">
+              Enter your phone number to receive a verification code
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-4">
+            {error && (
+              <div className="bg-[hsl(var(--destructive)/0.1)] border border-[hsl(var(--destructive))] p-4 rounded-md flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-[hsl(var(--destructive))] shrink-0 mt-0.5" />
+                <p className="text-sm text-[hsl(var(--destructive))]">{error}</p>
               </div>
-            </div>
-          </div>
-        )}
-        
-        <form className="mt-8 space-y-6" onSubmit={handlePhoneLogin}>
-          <div className="-space-y-px rounded-md shadow-sm">
-            <div>
-              <label htmlFor="phone" className="sr-only">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                className="relative block w-full rounded-t-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Phone Number (e.g., +1234567890)"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                disabled={isCodeSent && isLoading}
-              />
-            </div>
+            )}
             
-            {isCodeSent && (
-              <div>
-                <label htmlFor="code" className="sr-only">
-                  Verification Code
+            <form className="space-y-4" onSubmit={handlePhoneLogin}>
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium text-[hsl(var(--foreground))]">
+                  Phone Number
                 </label>
-                <input
-                  id="code"
-                  name="code"
-                  type="text"
-                  required
-                  className="relative block w-full rounded-b-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Verification Code"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  disabled={isLoading}
-                />
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    className="flex h-10 w-full rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] pl-10 pr-3 py-2 text-sm text-[hsl(var(--foreground))] ring-offset-[hsl(var(--background))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2"
+                    placeholder="+1234567890"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={isCodeSent && isLoading}
+                  />
+                </div>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                  Enter your phone number with country code
+                </p>
               </div>
-            )}
-          </div>
+              
+              {isCodeSent && (
+                <div className="space-y-2">
+                  <label htmlFor="code" className="text-sm font-medium text-[hsl(var(--foreground))]">
+                    Verification Code
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+                    <input
+                      id="code"
+                      name="code"
+                      type="text"
+                      required
+                      maxLength={6}
+                      className="flex h-10 w-full rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] pl-10 pr-3 py-2 text-sm text-[hsl(var(--foreground))] ring-offset-[hsl(var(--background))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 tracking-widest font-mono"
+                      placeholder="123456"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ''))}
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                    Enter the 6-digit code sent to your phone
+                  </p>
+                </div>
+              )}
 
-          <div>
-            {!isCodeSent ? (
-              <button
-                type="button"
-                onClick={handleSendCode}
-                disabled={isLoading}
-                className="group relative flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-400"
-              >
-                {isLoading ? "Sending..." : "Send Verification Code"}
-              </button>
-            ) : (
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-400"
-              >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </button>
-            )}
-          </div>
-        </form>
-        
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="pt-2">
+                {!isCodeSent ? (
+                  <Button 
+                    type="button" 
+                    onClick={handleSendCode} 
+                    disabled={isLoading || !phone}
+                    className="w-full h-11"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Verification Code
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading || !code || code.length < 6}
+                    className="w-full h-11"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      <>
+                        Sign in
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                )}
+                
+                {isCodeSent && (
+                  <div className="mt-3 text-center">
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      className="text-xs"
+                      disabled={countdown > 0 || isLoading}
+                      onClick={handleSendCode}
+                    >
+                      {countdown > 0 ? `Resend code in ${countdown}s` : "Resend verification code"}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </form>
+          </CardContent>
+          
+          <CardFooter className="flex flex-col space-y-4 pt-0">
+            <div className="relative w-full">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[hsl(var(--border))]" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-[hsl(var(--card))] px-2 text-[hsl(var(--muted-foreground))]">Or continue with</span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-gray-500">Or continue with</span>
-            </div>
-          </div>
 
-          <div className="mt-6">
-            <button
-              onClick={handleWeChatLogin}
-              className="group relative flex w-full justify-center rounded-md bg-green-600 py-2 px-3 text-sm font-semibold text-white hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            <Button 
+              onClick={handleWeChatLogin} 
+              variant="outline" 
+              className="w-full h-11 border-green-600 hover:bg-green-50 dark:hover:bg-green-950 text-green-600"
             >
+              <MessageSquare className="mr-2 h-4 w-4 text-green-600" />
               Sign in with WeChat
-            </button>
-          </div>
-        </div>
+            </Button>
+            
+            <p className="text-xs text-center text-[hsl(var(--muted-foreground))] mt-4">
+              By signing in, you agree to our{" "}
+              <Link href="/terms" className="text-[hsl(var(--primary))] hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-[hsl(var(--primary))] hover:underline">
+                Privacy Policy
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );
