@@ -6,11 +6,9 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { OTPInput, SlotProps } from "input-otp";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
-import { PhoneIcon, ArrowRightIcon, CheckCircleIcon, Loader2Icon, MessageSquareIcon } from "lucide-react";
+import { PhoneIcon, ArrowRightIcon, CheckCircleIcon, Loader2Icon } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+import { FaWeixin } from "react-icons/fa";
 import { cn } from "../../lib/utils";
 
 // Phone number validation schema
@@ -35,6 +33,16 @@ export default function SignIn() {
   const [countdown, setCountdown] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Prevent scrolling on the body
+    document.body.style.overflow = "hidden";
+    
+    return () => {
+      // Re-enable scrolling when component unmounts
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   useEffect(() => {
     if (isCodeSent) {
@@ -142,105 +150,298 @@ export default function SignIn() {
     signIn("wechat", { callbackUrl: "/" });
   };
 
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    signIn("google", { callbackUrl: "/" });
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[hsl(var(--background))] px-4 py-8">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-[hsl(var(--primary))]">CalTrade</h1>
-          <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">Your trusted marketplace for secure trading</p>
+    <div style={{
+      height: "100vh",
+      width: "100vw",
+      margin: 0,
+      padding: 0,
+      display: "flex",
+      flexDirection: "column",
+      background: "linear-gradient(135deg, #4f46e5 0%, #7e22ce 50%, #ec4899 100%)",
+      position: "relative",
+      overflow: "hidden"
+    }}>
+      {/* Background Decoration */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent)"
+      }}></div>
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "radial-gradient(circle at bottom left, rgba(255,255,255,0.1), transparent)"
+      }}></div>
+      
+      {/* Header */}
+      <header style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "16px 24px",
+        position: "relative",
+        zIndex: 10
+      }}>
+        <div style={{
+          fontSize: "28px",
+          fontWeight: "bold",
+          color: "white"
+        }}>
+          CalTrade
         </div>
-        
-        <Card className="w-full shadow-md border-[hsl(var(--border))]">
-          <CardHeader className="space-y-1 pb-4 pt-6">
-            <div className="flex flex-col items-center gap-3">
-              <div
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--background))]"
-                aria-hidden="true"
-              >
-                {isSuccess ? (
-                  <CheckCircleIcon className="h-7 w-7 text-emerald-500" />
-                ) : (
-                  <PhoneIcon className="h-7 w-7 text-[hsl(var(--foreground))/80]" />
-                )}
-              </div>
-              
-              <CardTitle className="text-xl font-semibold tracking-tight text-center">
-                {!isCodeSent && !isSuccess && "Phone Verification"}
-                {isCodeSent && !isSuccess && "Enter Verification Code"}
-                {isSuccess && "Verification Complete"}
-              </CardTitle>
-              
-              <p className="text-center text-sm text-[hsl(var(--muted-foreground))] max-w-xs mx-auto">
-                {!isCodeSent && !isSuccess && "Please enter your phone number to receive a verification code"}
-                {isCodeSent && !isSuccess && `We've sent a code to ${phone}. Enter it below.`}
-                {isSuccess && "You have successfully verified your phone number."}
+        <nav style={{
+          display: "flex",
+          gap: "24px"
+        }}>
+          <Link href="/" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Home</Link>
+          <Link href="/about" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>About</Link>
+        </nav>
+      </header>
+      
+      {/* Main Content */}
+      <main style={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        zIndex: 5
+      }}>
+        {/* Card Container */}
+        <div style={{
+          width: "100%",
+          maxWidth: "400px",
+          margin: "0 16px",
+          backgroundColor: "white",
+          borderRadius: "16px",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+          overflow: "hidden",
+          position: "relative"
+        }}>
+          <div style={{ padding: "32px" }}>
+            {/* Card Header */}
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <h2 style={{ 
+                fontSize: "30px", 
+                fontWeight: "bold", 
+                color: "#111827",
+                margin: "0 0 8px 0"
+              }}>
+                Welcome to CalTrade
+              </h2>
+              <p style={{ 
+                fontSize: "14px", 
+                color: "#6b7280",
+                margin: 0
+              }}>
+                Sign in to start trading in your local Chinese community.
               </p>
             </div>
-          </CardHeader>
-          
-          <CardContent className="space-y-5 px-6">
-            {error && (
-              <div className="bg-[hsl(var(--destructive)/0.1)] border border-[hsl(var(--destructive))] p-4 rounded-md flex items-start gap-3">
-                <div className="h-5 w-5 text-[hsl(var(--destructive))] shrink-0 mt-0.5">⚠️</div>
-                <p className="text-sm text-[hsl(var(--destructive))]">{error}</p>
+            
+            {/* Card Content */}
+            {!isCodeSent && !isSuccess && (
+              <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
+                {/* Social Login Buttons */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <button 
+                    onClick={handleGoogleLogin}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f3f4f6",
+                      color: "#374151",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      height: "48px",
+                      width: "100%"
+                    }}
+                  >
+                    <FcGoogle style={{ marginRight: "8px", width: "20px", height: "20px" }} />
+                    <span>Sign in with Google</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleWeChatLogin}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#10b981",
+                      color: "white",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      height: "48px",
+                      width: "100%"
+                    }}
+                  >
+                    <FaWeixin style={{ marginRight: "8px", width: "20px", height: "20px" }} />
+                    <span>Sign in with WeChat</span>
+                  </button>
+                </div>
+                
+                {/* Divider */}
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div style={{ flex: 1, height: "1px", backgroundColor: "#e5e7eb" }}></div>
+                  <span style={{ color: "#6b7280", fontSize: "14px" }}>or continue with phone</span>
+                  <div style={{ flex: 1, height: "1px", backgroundColor: "#e5e7eb" }}></div>
+                </div>
+                
+                {/* Error Message */}
+                {error && (
+                  <div style={{
+                    backgroundColor: "#fee2e2",
+                    border: "1px solid #fecaca",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "12px"
+                  }}>
+                    <span style={{ color: "#ef4444" }}>⚠️</span>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#b91c1c" }}>{error}</p>
+                  </div>
+                )}
+                
+                {/* Phone Form */}
+                <form onSubmit={(e) => { e.preventDefault(); handleSendCode(); }} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <label htmlFor="phone" style={{ fontSize: "14px", fontWeight: 500, color: "#374151" }}>
+                      Phone Number
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <PhoneIcon style={{ 
+                        position: "absolute", 
+                        left: "12px", 
+                        top: "50%", 
+                        transform: "translateY(-50%)",
+                        width: "20px",
+                        height: "20px",
+                        color: "#9ca3af"
+                      }} />
+                      <input
+                        id="phone"
+                        type="tel"
+                        placeholder="+1234567890"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        style={{
+                          width: "100%",
+                          boxSizing: "border-box",
+                          height: "44px",
+                          paddingLeft: "40px",
+                          paddingRight: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid #d1d5db",
+                          fontSize: "14px",
+                          outline: "none"
+                        }}
+                        required
+                      />
+                    </div>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#6b7280" }}>
+                      Enter your phone number with country code
+                    </p>
+                  </div>
+                  
+                  <button 
+                    type="submit" 
+                    disabled={isLoading || !phone}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#3b82f6",
+                      color: "white",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      cursor: isLoading || !phone ? "not-allowed" : "pointer",
+                      opacity: isLoading || !phone ? 0.7 : 1,
+                      fontWeight: 500,
+                      height: "44px",
+                      width: "100%"
+                    }}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2Icon style={{ marginRight: "8px", width: "20px", height: "20px", animation: "spin 1s linear infinite" }} />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send Verification Code</span>
+                        <ArrowRightIcon style={{ marginLeft: "8px", width: "20px", height: "20px" }} />
+                      </>
+                    )}
+                  </button>
+                </form>
               </div>
             )}
             
-            {!isCodeSent && !isSuccess && (
-              <form onSubmit={(e) => { e.preventDefault(); handleSendCode(); }} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
-                  <div className="relative">
-                    <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1234567890"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="pl-10 h-11"
-                      required
-                    />
+            {/* Verification Code Step */}
+            {isCodeSent && !isSuccess && (
+              <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <div style={{ 
+                    width: "64px", 
+                    height: "64px", 
+                    borderRadius: "50%", 
+                    backgroundColor: "#dbeafe", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center" 
+                  }}>
+                    <PhoneIcon style={{ width: "32px", height: "32px", color: "#3b82f6" }} />
                   </div>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                    Enter your phone number with country code
-                  </p>
                 </div>
                 
-                <Button 
-                  type="submit" 
-                  disabled={isLoading || !phone}
-                  className="w-full h-11 mt-2"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      Send Verification Code
-                      <ArrowRightIcon className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </form>
-            )}
-            
-            {isCodeSent && !isSuccess && (
-              <div className="space-y-5">
-                <div className="space-y-3">
-                  <Label htmlFor="verification-code" className="text-sm font-medium text-center block">Verification Code</Label>
-                  <div className="flex justify-center py-2">
+                <div style={{ textAlign: "center" }}>
+                  <h3 style={{ fontSize: "20px", fontWeight: 600, color: "#111827", margin: "0 0 4px 0" }}>Verification Code</h3>
+                  <p style={{ fontSize: "14px", color: "#6b7280", margin: 0 }}>We've sent a code to {phone}</p>
+                </div>
+                
+                {error && (
+                  <div style={{
+                    backgroundColor: "#fee2e2",
+                    border: "1px solid #fecaca",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "12px"
+                  }}>
+                    <span style={{ color: "#ef4444" }}>⚠️</span>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#b91c1c" }}>{error}</p>
+                  </div>
+                )}
+                
+                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
                     <OTPInput
                       id="verification-code"
                       value={code}
                       onChange={setCode}
                       maxLength={6}
-                      containerClassName="flex items-center gap-2 has-[:disabled]:opacity-50"
+                      containerClassName="flex items-center gap-2"
                       onComplete={handlePhoneLogin}
                       render={({ slots }) => (
-                        <div className="flex gap-2">
+                        <div style={{ display: "flex", gap: "8px" }}>
                           {slots.map((slot, idx) => (
                             <Slot key={idx} {...slot} />
                           ))}
@@ -248,31 +449,52 @@ export default function SignIn() {
                       )}
                     />
                   </div>
-                </div>
-                
-                <div className="flex flex-col gap-4 pt-2">
-                  <Button 
+                  
+                  <button 
                     onClick={() => handlePhoneLogin()} 
                     disabled={code.length !== 6 || isLoading}
-                    className="w-full h-11"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#3b82f6",
+                      color: "white",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      cursor: code.length !== 6 || isLoading ? "not-allowed" : "pointer",
+                      opacity: code.length !== 6 || isLoading ? 0.7 : 1,
+                      fontWeight: 500,
+                      height: "44px",
+                      width: "100%"
+                    }}
                   >
                     {isLoading ? (
                       <>
-                        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                        Verifying...
+                        <Loader2Icon style={{ marginRight: "8px", width: "20px", height: "20px", animation: "spin 1s linear infinite" }} />
+                        <span>Verifying...</span>
                       </>
                     ) : (
                       <>
-                        Verify Code
-                        <ArrowRightIcon className="ml-2 h-4 w-4" />
+                        <span>Verify Code</span>
+                        <ArrowRightIcon style={{ marginLeft: "8px", width: "20px", height: "20px" }} />
                       </>
                     )}
-                  </Button>
+                  </button>
                   
-                  <div className="flex justify-center gap-4 text-sm">
+                  <div style={{ display: "flex", justifyContent: "center", gap: "16px", fontSize: "14px" }}>
                     <button 
                       type="button"
-                      className="text-sm text-[hsl(var(--primary))] hover:underline"
+                      style={{
+                        color: "#3b82f6",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                        textDecoration: "none",
+                        fontSize: "14px"
+                      }}
                       onClick={() => {
                         setIsCodeSent(false);
                         setCode("");
@@ -280,10 +502,19 @@ export default function SignIn() {
                     >
                       Change number
                     </button>
-                    <span className="text-[hsl(var(--muted-foreground))]">•</span>
+                    <span style={{ color: "#9ca3af" }}>•</span>
                     <button 
                       type="button"
-                      className="text-sm text-[hsl(var(--primary))] hover:underline disabled:opacity-50 disabled:no-underline"
+                      style={{
+                        color: "#3b82f6",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: countdown > 0 || isLoading ? "not-allowed" : "pointer",
+                        opacity: countdown > 0 || isLoading ? 0.5 : 1,
+                        textDecoration: "none",
+                        fontSize: "14px"
+                      }}
                       disabled={countdown > 0 || isLoading}
                       onClick={handleSendCode}
                     >
@@ -294,50 +525,66 @@ export default function SignIn() {
               </div>
             )}
             
+            {/* Success State */}
             {isSuccess && (
-              <div className="flex justify-center py-6">
-                <div className="animate-pulse text-emerald-500 text-center">
-                  <CheckCircleIcon className="h-14 w-14 mx-auto mb-3" />
-                  <p className="text-lg font-medium">Redirecting to your account...</p>
+              <div style={{ 
+                display: "flex", 
+                justifyContent: "center", 
+                padding: "24px 0",
+                textAlign: "center"
+              }}>
+                <div style={{ animation: "pulse 2s infinite" }}>
+                  <CheckCircleIcon style={{ 
+                    width: "64px", 
+                    height: "64px", 
+                    color: "#10b981", 
+                    margin: "0 auto 12px auto" 
+                  }} />
+                  <p style={{ fontSize: "18px", fontWeight: 500, color: "#111827", margin: "0 0 4px 0" }}>Verification successful!</p>
+                  <p style={{ fontSize: "14px", color: "#6b7280", margin: 0 }}>Redirecting to your account...</p>
                 </div>
               </div>
             )}
-          </CardContent>
-          
-          {!isSuccess && (
-            <CardFooter className="flex flex-col space-y-4 pt-2 pb-6 px-6">
-              <div className="relative w-full my-2">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[hsl(var(--border))]" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="bg-[hsl(var(--card))] px-2 text-[hsl(var(--muted-foreground))]">Or continue with</span>
-                </div>
-              </div>
-
-              <Button 
-                onClick={handleWeChatLogin} 
-                variant="outline" 
-                className="w-full h-11 border-green-600 hover:bg-green-50 dark:hover:bg-green-950 text-green-600"
-              >
-                <MessageSquareIcon className="mr-2 h-4 w-4 text-green-600" />
-                Sign in with WeChat
-              </Button>
-              
-              <p className="text-xs text-center text-[hsl(var(--muted-foreground))] mt-4">
-                By signing in, you agree to our{" "}
-                <Link href="/terms" className="text-[hsl(var(--primary))] hover:underline">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-[hsl(var(--primary))] hover:underline">
-                  Privacy Policy
-                </Link>
-              </p>
-            </CardFooter>
-          )}
-        </Card>
-      </div>
+            
+            {/* Footer */}
+            <div style={{ 
+              marginTop: "24px", 
+              textAlign: "center", 
+              fontSize: "14px", 
+              color: "#6b7280" 
+            }}>
+              By signing in, you agree to our <Link href="/terms" style={{ color: "#3b82f6", textDecoration: "none" }}>Terms & Conditions</Link> and <Link href="/privacy" style={{ color: "#3b82f6", textDecoration: "none" }}>Privacy Policy</Link>.
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <style jsx global>{`
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        
+        html, body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          width: 100%;
+          height: 100%;
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+          0% { opacity: 1; }
+          50% { opacity: 0.7; }
+          100% { opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -345,10 +592,20 @@ export default function SignIn() {
 function Slot(props: SlotProps) {
   return (
     <div
-      className={cn(
-        "flex h-12 w-10 items-center justify-center rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] text-base font-medium shadow-sm transition-all",
-        props.isActive && "z-10 border-[hsl(var(--primary))] ring-2 ring-[hsl(var(--primary))/20]"
-      )}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "44px",
+        height: "44px",
+        borderRadius: "8px",
+        border: `1px solid ${props.isActive ? "#3b82f6" : "#d1d5db"}`,
+        backgroundColor: "white",
+        fontSize: "18px",
+        fontWeight: 500,
+        boxShadow: props.isActive ? "0 0 0 2px rgba(59, 130, 246, 0.2)" : "0 1px 2px rgba(0, 0, 0, 0.05)",
+        transition: "all 0.2s"
+      }}
     >
       {props.char !== null && <div>{props.char}</div>}
     </div>
