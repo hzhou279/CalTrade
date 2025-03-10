@@ -143,34 +143,34 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-[hsl(var(--background))] p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-[hsl(var(--primary))]">CalTrade</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[hsl(var(--background))] px-4 py-8">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-[hsl(var(--primary))]">CalTrade</h1>
           <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">Your trusted marketplace for secure trading</p>
         </div>
         
-        <Card className="w-full shadow-lg border-[hsl(var(--border))]">
-          <CardHeader className="space-y-1 pb-4">
-            <div className="flex flex-col items-center gap-2">
+        <Card className="w-full shadow-md border-[hsl(var(--border))]">
+          <CardHeader className="space-y-1 pb-4 pt-6">
+            <div className="flex flex-col items-center gap-3">
               <div
-                className="flex size-12 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--border))]"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--background))]"
                 aria-hidden="true"
               >
                 {isSuccess ? (
-                  <CheckCircleIcon className="h-6 w-6 text-emerald-500" />
+                  <CheckCircleIcon className="h-7 w-7 text-emerald-500" />
                 ) : (
-                  <PhoneIcon className="h-6 w-6 text-[hsl(var(--foreground))/80]" />
+                  <PhoneIcon className="h-7 w-7 text-[hsl(var(--foreground))/80]" />
                 )}
               </div>
               
-              <CardTitle className="text-xl font-semibold tracking-tight">
+              <CardTitle className="text-xl font-semibold tracking-tight text-center">
                 {!isCodeSent && !isSuccess && "Phone Verification"}
                 {isCodeSent && !isSuccess && "Enter Verification Code"}
                 {isSuccess && "Verification Complete"}
               </CardTitle>
               
-              <p className="text-center text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="text-center text-sm text-[hsl(var(--muted-foreground))] max-w-xs mx-auto">
                 {!isCodeSent && !isSuccess && "Please enter your phone number to receive a verification code"}
                 {isCodeSent && !isSuccess && `We've sent a code to ${phone}. Enter it below.`}
                 {isSuccess && "You have successfully verified your phone number."}
@@ -178,7 +178,7 @@ export default function SignIn() {
             </div>
           </CardHeader>
           
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 px-6">
             {error && (
               <div className="bg-[hsl(var(--destructive)/0.1)] border border-[hsl(var(--destructive))] p-4 rounded-md flex items-start gap-3">
                 <div className="h-5 w-5 text-[hsl(var(--destructive))] shrink-0 mt-0.5">⚠️</div>
@@ -187,9 +187,9 @@ export default function SignIn() {
             )}
             
             {!isCodeSent && !isSuccess && (
-              <form onSubmit={(e) => { e.preventDefault(); handleSendCode(); }} className="space-y-4">
+              <form onSubmit={(e) => { e.preventDefault(); handleSendCode(); }} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
                   <div className="relative">
                     <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                     <Input
@@ -198,7 +198,7 @@ export default function SignIn() {
                       placeholder="+1234567890"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 h-11"
                       required
                     />
                   </div>
@@ -210,7 +210,7 @@ export default function SignIn() {
                 <Button 
                   type="submit" 
                   disabled={isLoading || !phone}
-                  className="w-full h-11"
+                  className="w-full h-11 mt-2"
                 >
                   {isLoading ? (
                     <>
@@ -228,9 +228,9 @@ export default function SignIn() {
             )}
             
             {isCodeSent && !isSuccess && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="verification-code">Verification Code</Label>
+              <div className="space-y-5">
+                <div className="space-y-3">
+                  <Label htmlFor="verification-code" className="text-sm font-medium text-center block">Verification Code</Label>
                   <div className="flex justify-center py-2">
                     <OTPInput
                       id="verification-code"
@@ -250,7 +250,7 @@ export default function SignIn() {
                   </div>
                 </div>
                 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 pt-2">
                   <Button 
                     onClick={() => handlePhoneLogin()} 
                     disabled={code.length !== 6 || isLoading}
@@ -295,18 +295,18 @@ export default function SignIn() {
             )}
             
             {isSuccess && (
-              <div className="flex justify-center py-4">
+              <div className="flex justify-center py-6">
                 <div className="animate-pulse text-emerald-500 text-center">
-                  <CheckCircleIcon className="h-12 w-12 mx-auto mb-2" />
-                  <p>Redirecting to your account...</p>
+                  <CheckCircleIcon className="h-14 w-14 mx-auto mb-3" />
+                  <p className="text-lg font-medium">Redirecting to your account...</p>
                 </div>
               </div>
             )}
           </CardContent>
           
           {!isSuccess && (
-            <CardFooter className="flex flex-col space-y-4 pt-0">
-              <div className="relative w-full">
+            <CardFooter className="flex flex-col space-y-4 pt-2 pb-6 px-6">
+              <div className="relative w-full my-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-[hsl(var(--border))]" />
                 </div>
