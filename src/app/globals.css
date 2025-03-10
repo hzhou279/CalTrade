@@ -1,3 +1,4 @@
+/* Remove Tremor import that's causing issues */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

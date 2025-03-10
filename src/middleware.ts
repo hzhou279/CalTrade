@@ -12,6 +12,11 @@ const publicPaths = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // Redirect root path to admin dashboard
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+  }
+  
   // Check if the path is public or starts with /api/auth (NextAuth.js API routes)
   if (
     publicPaths.some((path) => pathname === path) ||
@@ -33,6 +38,17 @@ export async function middleware(request: NextRequest) {
     const url = new URL("/auth/signin", request.url);
     url.searchParams.set("callbackUrl", encodeURI(request.url));
     return NextResponse.redirect(url);
+  }
+
+  // Check for admin access
+  if (pathname.startsWith("/admin")) {
+    // If user is not an admin, redirect to sign-in page
+    if (token.role !== "admin") {
+      console.log("Access denied: User is not an admin", token);
+      const url = new URL("/auth/signin", request.url);
+      url.searchParams.set("error", "AccessDenied");
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();
