@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { marketplaceCategories } from '../../lib/marketplace-data';
 import { MarketplaceFilter } from '../../../types/marketplace';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface FilterSidebarProps {
   onFilterChange: (filters: MarketplaceFilter) => void;
@@ -16,13 +17,20 @@ export default function FilterSidebar({ onFilterChange, currentFilters }: Filter
   const [selectedCategory, setSelectedCategory] = useState(currentFilters.category || '');
   const [selectedCondition, setSelectedCondition] = useState(currentFilters.condition || '');
   const [showAllCategories, setShowAllCategories] = useState(false);
+  
+  // Collapsible sections
+  const [expandedSections, setExpandedSections] = useState({
+    categories: true,
+    price: true,
+    condition: true
+  });
 
   const conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
   
-  // Display only first 6 categories initially, then show/hide the rest
+  // Display only first 4 categories initially, then show/hide the rest
   const displayedCategories = showAllCategories 
     ? marketplaceCategories 
-    : marketplaceCategories.slice(0, 6);
+    : marketplaceCategories.slice(0, 4);
 
   const handleApplyFilters = () => {
     onFilterChange({
@@ -42,134 +50,153 @@ export default function FilterSidebar({ onFilterChange, currentFilters }: Filter
     setSelectedCondition('');
     onFilterChange({});
   };
+  
+  const toggleSection = (section: 'categories' | 'price' | 'condition') => {
+    setExpandedSections({
+      ...expandedSections,
+      [section]: !expandedSections[section]
+    });
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold mb-3">Search</h3>
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search items..."
-            className="w-full p-2 border rounded-md"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleApplyFilters();
-              }
-            }}
-          />
-          <button 
-            onClick={handleApplyFilters}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
-        </div>
+    <div className="space-y-4">
+      <div className="mb-4">
+        <h3 className="text-base font-semibold mb-2 text-gray-800">Refine Results</h3>
+        <p className="text-xs text-gray-500">Use these filters to narrow down your search</p>
       </div>
-
-      <div>
-        <h3 className="text-lg font-semibold mb-3">Categories</h3>
-        <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-          <div className="flex items-center mb-2">
-            <input
-              type="radio"
-              id="category-all"
-              name="category"
-              checked={selectedCategory === ''}
-              onChange={() => setSelectedCategory('')}
-              className="mr-2"
-            />
-            <label htmlFor="category-all" className="text-gray-700">All Categories</label>
-          </div>
-          {displayedCategories.map((category) => (
-            <div key={category.id} className="flex items-center">
+      
+      {/* Categories Section */}
+      <div className="border-b pb-3">
+        <div 
+          className="flex justify-between items-center cursor-pointer mb-2"
+          onClick={() => toggleSection('categories')}
+        >
+          <h3 className="text-sm font-semibold text-gray-700">Categories</h3>
+          {expandedSections.categories ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+        
+        {expandedSections.categories && (
+          <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
+            <div className="flex items-center mb-1">
               <input
                 type="radio"
-                id={`category-${category.id}`}
+                id="category-all"
                 name="category"
-                checked={selectedCategory === category.name}
-                onChange={() => setSelectedCategory(category.name)}
-                className="mr-2"
+                checked={selectedCategory === ''}
+                onChange={() => setSelectedCategory('')}
+                className="mr-2 h-3 w-3"
               />
-              <label htmlFor={`category-${category.id}`} className="text-gray-700">{category.name}</label>
+              <label htmlFor="category-all" className="text-xs text-gray-700">All Categories</label>
             </div>
-          ))}
-          {marketplaceCategories.length > 6 && (
-            <button 
-              onClick={() => setShowAllCategories(!showAllCategories)}
-              className="text-blue-600 hover:text-blue-800 text-sm mt-2"
-            >
-              {showAllCategories ? 'Show Less' : 'Show More'}
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-semibold mb-3">Price Range</h3>
-        <div className="flex space-x-2">
-          <input
-            type="number"
-            placeholder="Min"
-            className="w-full p-2 border rounded-md"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-          />
-          <span className="self-center">-</span>
-          <input
-            type="number"
-            placeholder="Max"
-            className="w-full p-2 border rounded-md"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-semibold mb-3">Condition</h3>
-        <div className="space-y-2">
-          <div className="flex items-center mb-2">
-            <input
-              type="radio"
-              id="condition-all"
-              name="condition"
-              checked={selectedCondition === ''}
-              onChange={() => setSelectedCondition('')}
-              className="mr-2"
-            />
-            <label htmlFor="condition-all" className="text-gray-700">Any Condition</label>
+            {displayedCategories.map((category) => (
+              <div key={category.id} className="flex items-center">
+                <input
+                  type="radio"
+                  id={`category-${category.id}`}
+                  name="category"
+                  checked={selectedCategory === category.name}
+                  onChange={() => setSelectedCategory(category.name)}
+                  className="mr-2 h-3 w-3"
+                />
+                <label htmlFor={`category-${category.id}`} className="text-xs text-gray-700">{category.name}</label>
+              </div>
+            ))}
+            {marketplaceCategories.length > 4 && (
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowAllCategories(!showAllCategories);
+                }}
+                className="text-xs text-blue-600 hover:text-blue-800 mt-1"
+              >
+                {showAllCategories ? 'Show Less' : 'Show More'}
+              </button>
+            )}
           </div>
-          {conditions.map((condition) => (
-            <div key={condition} className="flex items-center">
+        )}
+      </div>
+
+      {/* Price Range Section */}
+      <div className="border-b pb-3">
+        <div 
+          className="flex justify-between items-center cursor-pointer mb-2"
+          onClick={() => toggleSection('price')}
+        >
+          <h3 className="text-sm font-semibold text-gray-700">Price Range</h3>
+          {expandedSections.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+        
+        {expandedSections.price && (
+          <div className="flex space-x-2">
+            <input
+              type="number"
+              placeholder="Min"
+              className="w-full p-1 border rounded-md text-xs"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+            />
+            <span className="self-center text-xs">-</span>
+            <input
+              type="number"
+              placeholder="Max"
+              className="w-full p-1 border rounded-md text-xs"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Condition Section */}
+      <div className="border-b pb-3">
+        <div 
+          className="flex justify-between items-center cursor-pointer mb-2"
+          onClick={() => toggleSection('condition')}
+        >
+          <h3 className="text-sm font-semibold text-gray-700">Condition</h3>
+          {expandedSections.condition ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+        
+        {expandedSections.condition && (
+          <div className="space-y-1">
+            <div className="flex items-center mb-1">
               <input
                 type="radio"
-                id={`condition-${condition}`}
+                id="condition-all"
                 name="condition"
-                checked={selectedCondition === condition}
-                onChange={() => setSelectedCondition(condition)}
-                className="mr-2"
+                checked={selectedCondition === ''}
+                onChange={() => setSelectedCondition('')}
+                className="mr-2 h-3 w-3"
               />
-              <label htmlFor={`condition-${condition}`} className="text-gray-700">{condition}</label>
+              <label htmlFor="condition-all" className="text-xs text-gray-700">Any Condition</label>
             </div>
-          ))}
-        </div>
+            {conditions.map((condition) => (
+              <div key={condition} className="flex items-center">
+                <input
+                  type="radio"
+                  id={`condition-${condition}`}
+                  name="condition"
+                  checked={selectedCondition === condition}
+                  onChange={() => setSelectedCondition(condition)}
+                  className="mr-2 h-3 w-3"
+                />
+                <label htmlFor={`condition-${condition}`} className="text-xs text-gray-700">{condition}</label>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 pt-2">
         <button
           onClick={handleApplyFilters}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex-1"
+          className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 flex-1 text-xs font-medium"
         >
           Apply Filters
         </button>
         <button
           onClick={handleClearFilters}
-          className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+          className="bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md hover:bg-gray-300 text-xs font-medium"
         >
           Clear
         </button>

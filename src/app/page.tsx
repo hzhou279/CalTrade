@@ -7,11 +7,14 @@ import FilterSidebar from './components/marketplace/FilterSidebar';
 import MarketplaceHeader from './components/marketplace/MarketplaceHeader';
 import { MarketplaceFilter, MarketplaceItem } from '../types/marketplace';
 import Link from 'next/link';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 
 export default function MarketplacePage() {
   const [filters, setFilters] = useState<MarketplaceFilter>({});
   const [filteredItems, setFilteredItems] = useState<MarketplaceItem[]>(marketplaceItems);
   const [isLoading, setIsLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Apply filters to items
   useEffect(() => {
@@ -54,6 +57,11 @@ export default function MarketplacePage() {
     
     return () => clearTimeout(timer);
   }, [filters]);
+
+  const handleQuickSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFilters({ ...filters, searchQuery });
+  };
 
   return (
     <div style={{
@@ -117,7 +125,7 @@ export default function MarketplacePage() {
         {/* Card Container */}
         <div style={{
           width: "100%",
-          maxWidth: "1200px",
+          maxWidth: "1400px", // Increased from 1200px
           backgroundColor: "white",
           borderRadius: "16px",
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
@@ -144,14 +152,111 @@ export default function MarketplacePage() {
               </p>
             </div>
             
+            {/* Quick Search Bar */}
+            <div style={{
+              marginBottom: "24px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "16px"
+            }}>
+              <form 
+                onSubmit={handleQuickSearch}
+                style={{
+                  display: "flex",
+                  flex: 1,
+                  maxWidth: "600px",
+                  margin: "0 auto"
+                }}
+              >
+                <div style={{
+                  position: "relative",
+                  width: "100%",
+                  display: "flex"
+                }}>
+                  <input
+                    type="text"
+                    placeholder="Search items..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "12px 16px",
+                      paddingLeft: "40px",
+                      borderRadius: "8px",
+                      border: "1px solid #e5e7eb",
+                      fontSize: "16px",
+                      outline: "none",
+                      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+                    }}
+                  />
+                  <Search 
+                    size={20} 
+                    style={{
+                      position: "absolute",
+                      left: "12px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      color: "#9ca3af"
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      backgroundColor: "#4f46e5",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "0 8px 8px 0",
+                      padding: "0 16px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+              
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  backgroundColor: showFilters ? "#f3f4f6" : "#4f46e5",
+                  color: showFilters ? "#4f46e5" : "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                {showFilters ? (
+                  <>
+                    <X size={18} />
+                    Hide Filters
+                  </>
+                ) : (
+                  <>
+                    <SlidersHorizontal size={18} />
+                    Advanced Filters
+                  </>
+                )}
+              </button>
+            </div>
+            
             <div className="flex flex-col md:flex-row gap-8">
-              {/* Sidebar with filters */}
-              <div className="w-full md:w-1/4 bg-white p-6 rounded-lg h-fit">
-                <FilterSidebar onFilterChange={setFilters} currentFilters={filters} />
-              </div>
+              {/* Sidebar with filters - hidden by default */}
+              {showFilters && (
+                <div className="w-full md:w-1/4 bg-white p-6 rounded-lg border border-gray-200">
+                  <FilterSidebar onFilterChange={setFilters} currentFilters={filters} />
+                </div>
+              )}
               
               {/* Main content with items */}
-              <div className="w-full md:w-3/4">
+              <div className={`w-full ${showFilters ? 'md:w-3/4' : 'md:w-full'}`}>
                 {/* Results summary */}
                 <div className="mb-6 flex justify-between items-center">
                   <h2 className="text-xl font-semibold">
@@ -165,15 +270,15 @@ export default function MarketplacePage() {
                 </div>
                 
                 {isLoading ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[...Array(6)].map((_, index) => (
-                      <div key={index} className="bg-white rounded-lg shadow-sm h-80 animate-pulse">
-                        <div className="bg-gray-200 h-48 rounded-t-lg"></div>
-                        <div className="p-4">
-                          <div className="bg-gray-200 h-5 rounded w-3/4 mb-2"></div>
-                          <div className="bg-gray-200 h-6 rounded w-1/4 mb-2"></div>
-                          <div className="bg-gray-200 h-4 rounded w-full mb-1"></div>
-                          <div className="bg-gray-200 h-4 rounded w-2/3"></div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {[...Array(10)].map((_, index) => (
+                      <div key={index} className="bg-white rounded-lg shadow-sm h-64 animate-pulse">
+                        <div className="bg-gray-200 h-32 rounded-t-lg"></div>
+                        <div className="p-3">
+                          <div className="bg-gray-200 h-4 rounded w-3/4 mb-2"></div>
+                          <div className="bg-gray-200 h-5 rounded w-1/4 mb-2"></div>
+                          <div className="bg-gray-200 h-3 rounded w-full mb-1"></div>
+                          <div className="bg-gray-200 h-3 rounded w-2/3"></div>
                         </div>
                       </div>
                     ))}
@@ -184,7 +289,7 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {filteredItems.map((item) => (
                       <ItemCard key={item.id} item={item} />
                     ))}
