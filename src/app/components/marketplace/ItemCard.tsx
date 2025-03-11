@@ -12,33 +12,90 @@ interface ItemCardProps {
 export default function ItemCard({ item }: ItemCardProps) {
   return (
     <Link href={`/marketplace/${item.id}`} className="block">
-      <Card className="overflow-hidden h-full transition-all duration-200 hover:shadow-md hover:translate-y-[-4px]">
-        <div className="relative w-full h-48">
+      <div 
+        className="rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 h-full flex flex-col relative cursor-pointer"
+        style={{
+          borderRadius: "12px",
+          overflow: "hidden",
+          backgroundColor: "white",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          cursor: "pointer"
+        }}
+      >
+        <div style={{ position: "relative", width: "100%", height: "200px" }}>
           <Image
             src={item.imageUrl}
             alt={item.title}
             fill
-            className="object-cover"
+            style={{ objectFit: "cover" }}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium">
+          <div style={{
+            position: "absolute",
+            top: "12px",
+            right: "12px",
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backdropFilter: "blur(4px)",
+            padding: "4px 10px",
+            borderRadius: "9999px",
+            fontSize: "12px",
+            fontWeight: "500"
+          }}>
             {item.condition}
           </div>
         </div>
-        <CardContent className="p-4">
-          <h3 className="text-lg font-semibold line-clamp-1">{item.title}</h3>
-          <p className="text-xl font-bold mt-1">${item.price.toLocaleString()}</p>
-          <p className="text-sm text-gray-500 mt-1 line-clamp-2">{item.description}</p>
-        </CardContent>
-        <CardFooter className="p-4 pt-0 flex justify-between items-center">
-          <div className="flex items-center">
-            <span className="text-xs text-gray-500">{item.location}</span>
-          </div>
-          <span className="text-xs text-gray-500">
+        <div style={{ padding: "16px", flex: "1" }}>
+          <h3 style={{
+            fontSize: "18px",
+            fontWeight: "600",
+            marginBottom: "8px",
+            color: "#111827",
+            display: "-webkit-box",
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden"
+          }}>
+            {item.title}
+          </h3>
+          <p style={{
+            fontSize: "20px",
+            fontWeight: "700",
+            marginBottom: "8px",
+            color: "#4f46e5"
+          }}>
+            ${item.price.toLocaleString()}
+          </p>
+          <p style={{
+            fontSize: "14px",
+            color: "#6b7280",
+            marginBottom: "12px",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden"
+          }}>
+            {item.description}
+          </p>
+        </div>
+        <div style={{
+          padding: "12px 16px",
+          borderTop: "1px solid #f3f4f6",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+          <span style={{ fontSize: "12px", color: "#6b7280" }}>
+            {item.location}
+          </span>
+          <span style={{ fontSize: "12px", color: "#6b7280" }}>
             {new Date(item.createdAt).toLocaleDateString()}
           </span>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 } 
