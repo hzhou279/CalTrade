@@ -8,21 +8,19 @@ const publicPaths = [
   "/auth/signup",
   "/auth/error",
   "/api/auth/sms",
+  "/", // Root path is now public (marketplace)
+  "/marketplace", // Marketplace paths are public for browsing
 ];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Redirect root path to admin dashboard
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-  }
   
   // Check if the path is public or starts with /api/auth (NextAuth.js API routes)
   if (
     publicPaths.some((path) => pathname === path) ||
     pathname.startsWith("/api/auth/") ||
     pathname.startsWith("/_next/") ||
+    pathname.startsWith("/marketplace/") && !pathname.includes("/new") && !pathname.includes("/my-items") && !pathname.includes("/edit") ||
     pathname.includes(".")
   ) {
     return NextResponse.next();
