@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MarketplaceItem } from '../../../types/marketplace';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ItemDetailModal from './ItemDetailModal';
@@ -15,6 +15,8 @@ export default function ItemCard({ item }: ItemCardProps) {
   // For multiple images, we'll use the local images we downloaded
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [animating, setAnimating] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   
   // Extract the base name from the image URL
   const getBaseName = (url: string) => {
@@ -44,105 +46,146 @@ export default function ItemCard({ item }: ItemCardProps) {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  // Handle card click with animation
+  const handleCardClick = () => {
+    if (!animating) {
+      setAnimating(true);
+      
+      // Start the animation
+      if (cardRef.current) {
+        cardRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+        cardRef.current.style.transform = 'scale(1.05)';
+        cardRef.current.style.opacity = '0.9';
+        
+        // After a short delay, show the modal
+        setTimeout(() => {
+          setShowModal(true);
+          // Reset the card style after modal is shown
+          if (cardRef.current) {
+            cardRef.current.style.transform = 'scale(1)';
+            cardRef.current.style.opacity = '1';
+          }
+          setAnimating(false);
+        }, 300);
+      }
+    }
+  };
+
   // Determine card properties based on item category
   const getCategoryStyles = () => {
     // Define different sizes for different categories with more compact heights
+    const baseImageHeight = window.innerWidth < 640 ? 120 : 140; // Smaller on mobile
+    const baseCardHeight = window.innerWidth < 640 ? 200 : 220; // Smaller on mobile
+    const baseIconSize = window.innerWidth < 640 ? 14 : 16; // Smaller on mobile
+    
     switch (item.category) {
       case 'Vehicles':
         return {
-          imageHeight: 160 * 1.5, // Increased by 1.5x
-          cardHeight: 260 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#3b82f6', // blue
-          iconSize: 18
+          iconSize: baseIconSize + 2
         };
       case 'Furniture':
         return {
-          imageHeight: 140 * 1.5, // Increased by 1.5x
-          cardHeight: 240 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#8b5cf6', // purple
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Electronics':
         return {
-          imageHeight: 130 * 1.5, // Increased by 1.5x
-          cardHeight: 220 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#10b981', // green
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Clothing':
         return {
-          imageHeight: 140 * 1.5, // Increased by 1.5x
-          cardHeight: 220 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#f43f5e', // pink
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Books':
         return {
-          imageHeight: 130 * 1.5, // Increased by 1.5x
-          cardHeight: 210 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#f59e0b', // amber
-          iconSize: 14
+          iconSize: baseIconSize - 2
         };
       case 'Accessories':
         return {
-          imageHeight: 120 * 1.5, // Increased by 1.5x
-          cardHeight: 200 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#ec4899', // pink
-          iconSize: 14
+          iconSize: baseIconSize - 2
         };
       case 'Photography':
         return {
-          imageHeight: 140 * 1.5, // Increased by 1.5x
-          cardHeight: 220 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#6366f1', // indigo
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Audio':
         return {
-          imageHeight: 130 * 1.5, // Increased by 1.5x
-          cardHeight: 210 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#0ea5e9', // sky blue
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Sports':
         return {
-          imageHeight: 140 * 1.5, // Increased by 1.5x
-          cardHeight: 220 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#ef4444', // red
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Kitchen':
         return {
-          imageHeight: 130 * 1.5, // Increased by 1.5x
-          cardHeight: 210 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#f97316', // orange
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Home & Garden':
         return {
-          imageHeight: 140 * 1.5, // Increased by 1.5x
-          cardHeight: 220 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#22c55e', // green
-          iconSize: 16
+          iconSize: baseIconSize
         };
       case 'Toys & Games':
         return {
-          imageHeight: 130 * 1.5, // Increased by 1.5x
-          cardHeight: 210 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#a855f7', // purple
-          iconSize: 16
+          iconSize: baseIconSize
         };
       default:
         return {
-          imageHeight: 130 * 1.5, // Increased by 1.5x
-          cardHeight: 210 * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
+          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
           accentColor: '#4f46e5', // indigo
-          iconSize: 16
+          iconSize: baseIconSize
         };
     }
   };
 
-  const { imageHeight, cardHeight, accentColor, iconSize } = getCategoryStyles();
+  // Use useEffect to handle window resize and update styles
+  const [styles, setStyles] = useState(getCategoryStyles());
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setStyles(getCategoryStyles());
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const { imageHeight, cardHeight, accentColor, iconSize } = styles;
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
@@ -160,7 +203,8 @@ export default function ItemCard({ item }: ItemCardProps) {
   return (
     <>
       <div 
-        onClick={() => setShowModal(true)}
+        ref={cardRef}
+        onClick={handleCardClick}
         className="rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer"
         style={{
           borderRadius: "10px",
@@ -186,7 +230,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             alt={item.title}
             fill
             style={{ objectFit: "cover" }}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 20vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
           
           {/* Image navigation buttons */}
@@ -194,25 +238,25 @@ export default function ItemCard({ item }: ItemCardProps) {
             <>
               <button 
                 onClick={prevImage}
-                className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-1 hover:bg-white/90 transition-colors z-10"
+                className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-0.5 sm:p-1 hover:bg-white/90 transition-colors z-10"
                 aria-label="Previous image"
               >
                 <ChevronLeft size={iconSize} />
               </button>
               <button 
                 onClick={nextImage}
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-1 hover:bg-white/90 transition-colors z-10"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-0.5 sm:p-1 hover:bg-white/90 transition-colors z-10"
                 aria-label="Next image"
               >
                 <ChevronRight size={iconSize} />
               </button>
               
               {/* Image indicators */}
-              <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1">
+              <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-0.5 sm:gap-1">
                 {images.map((_, index) => (
                   <span 
                     key={index} 
-                    className={`inline-block h-1.5 w-1.5 rounded-full ${index === currentImageIndex ? 'bg-white' : 'bg-white/50'}`}
+                    className={`inline-block h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full ${index === currentImageIndex ? 'bg-white' : 'bg-white/50'}`}
                   />
                 ))}
               </div>
@@ -220,79 +264,31 @@ export default function ItemCard({ item }: ItemCardProps) {
           )}
           
           {/* Category badge */}
-          <div style={{
-            position: "absolute",
-            top: "8px",
-            left: "8px",
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            backdropFilter: "blur(4px)",
-            padding: "4px 10px",
-            borderRadius: "9999px",
-            fontSize: "12px",
-            fontWeight: "500",
-            color: accentColor,
-            zIndex: 5
-          }}>
+          <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-white/85 backdrop-blur-[2px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium z-5"
+            style={{ color: accentColor }}
+          >
             {item.category}
           </div>
           
           {/* Condition badge */}
-          <div style={{
-            position: "absolute",
-            top: "8px",
-            right: "8px",
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            backdropFilter: "blur(4px)",
-            padding: "4px 10px",
-            borderRadius: "9999px",
-            fontSize: "12px",
-            fontWeight: "500",
-            zIndex: 5
-          }}>
+          <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-white/85 backdrop-blur-[2px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium z-5">
             {item.condition}
           </div>
         </div>
         
-        <div style={{ 
-          padding: "16px", 
-          flex: "1", 
-          display: "flex", 
-          flexDirection: "column",
-          height: `${cardHeight - imageHeight - 28}px` // Calculate content height (28px for footer)
-        }}>
-          <h3 style={{
-            fontSize: "16px",
-            fontWeight: "600",
-            marginBottom: "6px",
-            color: "#111827",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            lineHeight: "1.3"
-          }}>
+        <div className="p-2 sm:p-4 flex-1 flex flex-col">
+          <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 text-gray-900 line-clamp-2">
             {item.title}
           </h3>
-          <p style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            color: accentColor
-          }}>
+          <p className="text-base sm:text-lg font-bold text-primary mt-auto" style={{ color: accentColor }}>
             ${item.price.toLocaleString()}
           </p>
         </div>
         
-        <div style={{
-          padding: "8px 16px",
-          borderTop: `1px solid ${accentColor}25`,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "12px",
-          color: "#6b7280",
-          height: "36px"
-        }}>
-          <span>{item.location}</span>
+        <div className="px-2 sm:px-4 py-1 sm:py-2 border-t text-[10px] sm:text-xs text-gray-500 flex justify-between items-center"
+          style={{ borderColor: `${accentColor}25` }}
+        >
+          <span className="truncate max-w-[50%]">{item.location}</span>
           <span>{new Date(item.createdAt).toLocaleDateString()}</span>
         </div>
       </div>

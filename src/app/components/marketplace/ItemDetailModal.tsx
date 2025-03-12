@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MarketplaceItem } from '../../../types/marketplace';
 
 interface ItemDetailModalProps {
@@ -77,42 +77,33 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
 
   return (
     <div 
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 animate-fadeIn"
       onClick={handleBackdropClick}
       style={{
         animation: 'fadeIn 0.2s ease-out',
       }}
     >
       <div 
-        className="bg-white rounded-lg overflow-hidden flex flex-col shadow-2xl"
+        className="bg-white rounded-lg overflow-hidden flex flex-col lg:flex-row shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         style={{
           animation: 'scaleIn 0.25s ease-out',
           transformOrigin: 'center',
-          width: '90%',
-          maxWidth: '900px',
+          width: '95%',
+          maxWidth: '1200px',
           height: '90vh',
-          maxHeight: '800px',
+          maxHeight: '700px',
         }}
       >
-        {/* Close button */}
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 bg-white/90 rounded-full p-1.5 hover:bg-white transition-colors z-10 shadow-md"
-          aria-label="Close modal"
-        >
-          <X size={20} color="#111827" />
-        </button>
-        
-        {/* Top part - Image gallery */}
-        <div className="w-full bg-gray-900 flex-shrink-0" style={{ height: '55%' }}>
+        {/* Left/Top part - Image gallery */}
+        <div className="w-full lg:w-1/2 bg-gray-900 flex-shrink-0 h-[40vh] lg:h-full">
           <div className="relative w-full h-full">
             <Image
               src={images[currentImageIndex]}
               alt={item.title}
               fill
               style={{ objectFit: "cover" }}
-              sizes="(max-width: 768px) 100vw, 900px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
               className="w-full h-full"
             />
             
@@ -121,26 +112,26 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               <>
                 <button 
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 hover:bg-white/90 transition-colors z-10 shadow-sm"
+                  className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-1 sm:p-2 hover:bg-white/90 transition-colors z-10 shadow-sm"
                   aria-label="Previous image"
                 >
-                  <ChevronLeft size={24} />
+                  <ChevronLeft size={20} />
                 </button>
                 <button 
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-2 hover:bg-white/90 transition-colors z-10 shadow-sm"
+                  className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/70 rounded-full p-1 sm:p-2 hover:bg-white/90 transition-colors z-10 shadow-sm"
                   aria-label="Next image"
                 >
-                  <ChevronRight size={24} />
+                  <ChevronRight size={20} />
                 </button>
                 
                 {/* Image indicators */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 flex justify-center gap-1 sm:gap-2">
                   {images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`h-2.5 w-2.5 rounded-full transition-all ${index === currentImageIndex ? 'bg-white scale-125 shadow-sm' : 'bg-white/50'}`}
+                      className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full transition-all ${index === currentImageIndex ? 'bg-white scale-125 shadow-sm' : 'bg-white/50'}`}
                       aria-label={`View image ${index + 1}`}
                     />
                   ))}
@@ -149,15 +140,15 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             )}
             
             {/* Category and condition badges */}
-            <div className="absolute top-4 left-4 flex gap-2">
+            <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-wrap gap-1 sm:gap-2">
               <span 
-                className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/80 backdrop-blur-sm"
+                className="inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-white/80 backdrop-blur-sm"
                 style={{ color: accentColor }}
               >
                 {item.category}
               </span>
               <span 
-                className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/80 backdrop-blur-sm text-gray-800"
+                className="inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-white/80 backdrop-blur-sm text-gray-800"
               >
                 {item.condition}
               </span>
@@ -165,41 +156,41 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           </div>
         </div>
         
-        {/* Bottom part - Item details */}
-        <div className="w-full p-6 overflow-y-auto" style={{ height: '45%' }}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{item.title}</h2>
+        {/* Right/Bottom part - Item details */}
+        <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">{item.title}</h2>
           
           <p 
-            className="text-3xl font-bold mb-4"
+            className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-5"
             style={{ color: accentColor }}
           >
             ${item.price.toLocaleString()}
           </p>
           
-          <div className="mb-5">
-            <h3 className="text-lg font-semibold mb-2">Description</h3>
-            <p className="text-gray-700 whitespace-pre-line">{item.description}</p>
+          <div className="mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Description</h3>
+            <p className="text-sm sm:text-base text-gray-700 whitespace-pre-line">{item.description}</p>
           </div>
           
-          <div className="border-t border-gray-200 pt-4">
-            <div className="flex justify-between text-sm text-gray-500 mb-3">
-              <span>Location: {item.location}</span>
+          <div className="border-t border-gray-200 pt-3 sm:pt-5">
+            <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
+              <span className="mb-1 sm:mb-0">Location: {item.location}</span>
               <span>Posted: {new Date(item.createdAt).toLocaleDateString()}</span>
             </div>
             
-            <div className="flex items-center mt-3">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 mr-3">
+            <div className="flex items-center mt-3 sm:mt-4">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 mr-2 sm:mr-3">
                 {item.sellerName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="font-medium">{item.sellerName}</p>
-                <p className="text-sm text-gray-500">Seller</p>
+                <p className="text-sm sm:text-base font-medium">{item.sellerName}</p>
+                <p className="text-xs sm:text-sm text-gray-500">Seller</p>
               </div>
             </div>
             
-            <div className="mt-5">
+            <div className="mt-4 sm:mt-6">
               <button 
-                className="w-full py-3 px-4 text-white font-medium rounded-lg transition-colors hover:opacity-90"
+                className="w-full py-2 sm:py-3 px-4 text-white font-medium rounded-lg transition-colors hover:opacity-90"
                 style={{ backgroundColor: accentColor }}
               >
                 Contact Seller
