@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { MarketplaceItem } from '../../../types/marketplace';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import ItemDetailModal from './ItemDetailModal';
 
 interface ItemCardProps {
   item: MarketplaceItem;
@@ -13,6 +14,7 @@ interface ItemCardProps {
 export default function ItemCard({ item }: ItemCardProps) {
   // For multiple images, we'll use the local images we downloaded
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   
   // Extract the base name from the image URL
   const getBaseName = (url: string) => {
@@ -142,9 +144,23 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   const { imageHeight, cardHeight, accentColor, iconSize } = getCategoryStyles();
 
+  // Prevent body scrolling when modal is open
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showModal]);
+
   return (
-    <Link href={`/marketplace/${item.id}`} className="block w-full">
+    <>
       <div 
+        onClick={() => setShowModal(true)}
         className="rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer"
         style={{
           borderRadius: "10px",
@@ -280,6 +296,14 @@ export default function ItemCard({ item }: ItemCardProps) {
           <span>{new Date(item.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
-    </Link>
+      
+      {/* Item Detail Modal */}
+      {showModal && (
+        <ItemDetailModal 
+          item={item} 
+          onClose={() => setShowModal(false)} 
+        />
+      )}
+    </>
   );
 } 
