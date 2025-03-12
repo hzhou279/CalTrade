@@ -84,11 +84,15 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
       }}
     >
       <div 
-        className="bg-white rounded-lg overflow-hidden max-w-5xl w-full max-h-[85vh] flex flex-col md:flex-row shadow-2xl"
+        className="bg-white rounded-lg overflow-hidden flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         style={{
           animation: 'scaleIn 0.25s ease-out',
           transformOrigin: 'center',
+          width: '90%',
+          maxWidth: '900px',
+          height: '90vh',
+          maxHeight: '800px',
         }}
       >
         {/* Close button */}
@@ -100,15 +104,16 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           <X size={20} color="#111827" />
         </button>
         
-        {/* Left side - Image gallery */}
-        <div className="w-full md:w-1/2 relative bg-gray-100 flex-shrink-0" style={{ height: '450px' }}>
+        {/* Top part - Image gallery */}
+        <div className="w-full bg-gray-900 flex-shrink-0" style={{ height: '55%' }}>
           <div className="relative w-full h-full">
             <Image
               src={images[currentImageIndex]}
               alt={item.title}
               fill
-              style={{ objectFit: "contain" }}
-              sizes="(max-width: 768px) 100vw, 50vw"
+              style={{ objectFit: "cover" }}
+              sizes="(max-width: 768px) 100vw, 900px"
+              className="w-full h-full"
             />
             
             {/* Image navigation buttons */}
@@ -142,48 +147,47 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
                 </div>
               </>
             )}
-          </div>
-        </div>
-        
-        {/* Right side - Item details */}
-        <div className="w-full md:w-1/2 p-6 overflow-y-auto" style={{ maxHeight: '450px' }}>
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex gap-2">
+            
+            {/* Category and condition badges */}
+            <div className="absolute top-4 left-4 flex gap-2">
               <span 
-                className="inline-block px-3 py-1 rounded-full text-xs font-medium"
-                style={{ backgroundColor: `${accentColor}20`, color: accentColor }}
+                className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/80 backdrop-blur-sm"
+                style={{ color: accentColor }}
               >
                 {item.category}
               </span>
               <span 
-                className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/80 backdrop-blur-sm text-gray-800"
               >
                 {item.condition}
               </span>
             </div>
           </div>
-          
+        </div>
+        
+        {/* Bottom part - Item details */}
+        <div className="w-full p-6 overflow-y-auto" style={{ height: '45%' }}>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{item.title}</h2>
           
           <p 
-            className="text-3xl font-bold mb-6"
+            className="text-3xl font-bold mb-4"
             style={{ color: accentColor }}
           >
             ${item.price.toLocaleString()}
           </p>
           
-          <div className="mb-6">
+          <div className="mb-5">
             <h3 className="text-lg font-semibold mb-2">Description</h3>
             <p className="text-gray-700 whitespace-pre-line">{item.description}</p>
           </div>
           
           <div className="border-t border-gray-200 pt-4">
-            <div className="flex justify-between text-sm text-gray-500 mb-2">
+            <div className="flex justify-between text-sm text-gray-500 mb-3">
               <span>Location: {item.location}</span>
               <span>Posted: {new Date(item.createdAt).toLocaleDateString()}</span>
             </div>
             
-            <div className="flex items-center mt-4">
+            <div className="flex items-center mt-3">
               <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 mr-3">
                 {item.sellerName.charAt(0).toUpperCase()}
               </div>
@@ -193,7 +197,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               </div>
             </div>
             
-            <div className="mt-6">
+            <div className="mt-5">
               <button 
                 className="w-full py-3 px-4 text-white font-medium rounded-lg transition-colors hover:opacity-90"
                 style={{ backgroundColor: accentColor }}
