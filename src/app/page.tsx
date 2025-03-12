@@ -289,20 +289,25 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8" style={{ gridAutoRows: "1fr", gridRowGap: "32px" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", margin: "-16px" }}>
                     {filteredItems.map((item) => {
-                      // Determine column span based on item category
-                      let colSpan = "";
-                      
-                      // Only vehicles take up more space
-                      if (item.category === 'Vehicles') {
-                        colSpan = "col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-1 xl:col-span-1";
-                      } else {
-                        colSpan = "col-span-1";
-                      }
+                      // Determine if this is a vehicle item
+                      const isVehicle = item.category === 'Vehicles';
                       
                       return (
-                        <div key={item.id} className={`${colSpan} flex`}>
+                        <div 
+                          key={item.id} 
+                          style={{
+                            width: "calc(20% - 32px)",
+                            margin: "16px",
+                            boxSizing: "border-box",
+                            // Responsive styles will be handled by CSS media queries
+                          }}
+                          className={`
+                            w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5
+                            ${isVehicle ? 'sm:w-full md:w-full lg:w-1/4 xl:w-1/5' : ''}
+                          `}
+                        >
                           <ItemCard item={item} />
                         </div>
                       );
