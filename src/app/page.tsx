@@ -289,14 +289,16 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {filteredItems.map((item) => {
                       // Determine column span based on item category
                       let colSpan = "";
                       
-                      // Only vehicles take up more space
+                      // Vehicles and large items take up more space
                       if (item.category === 'Vehicles') {
-                        colSpan = "col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-1";
+                        colSpan = "col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2";
+                      } else if (['Furniture', 'Home & Garden', 'Photography'].includes(item.category)) {
+                        colSpan = "col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1";
                       } else {
                         colSpan = "col-span-1";
                       }

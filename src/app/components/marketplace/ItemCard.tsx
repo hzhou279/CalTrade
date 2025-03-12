@@ -44,51 +44,51 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   // Determine card properties based on item category
   const getCategoryStyles = () => {
-    // Define different sizes for different categories
+    // Define different sizes for different categories with much more variation
     switch (item.category) {
       case 'Vehicles':
         return {
-          imageHeight: 140, // Fixed image height
-          descriptionLines: 4,
-          cardHeight: 320, // Overall card height
+          imageHeight: 180, // Larger image for vehicles
+          descriptionLines: 12, // Show much more description
+          cardHeight: 480, // Very tall card
           accentColor: '#3b82f6', // blue
           iconSize: 20
         };
       case 'Furniture':
         return {
-          imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 280,
+          imageHeight: 160,
+          descriptionLines: 8,
+          cardHeight: 380,
           accentColor: '#8b5cf6', // purple
           iconSize: 18
         };
       case 'Electronics':
         return {
-          imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 260,
+          imageHeight: 150,
+          descriptionLines: 6,
+          cardHeight: 320,
           accentColor: '#10b981', // green
           iconSize: 16
         };
       case 'Clothing':
         return {
-          imageHeight: 140,
-          descriptionLines: 2,
-          cardHeight: 240,
+          imageHeight: 160,
+          descriptionLines: 4,
+          cardHeight: 280,
           accentColor: '#f43f5e', // pink
           iconSize: 16
         };
       case 'Books':
         return {
           imageHeight: 140,
-          descriptionLines: 2,
-          cardHeight: 220,
+          descriptionLines: 3,
+          cardHeight: 240,
           accentColor: '#f59e0b', // amber
           iconSize: 14
         };
       case 'Accessories':
         return {
-          imageHeight: 140,
+          imageHeight: 130,
           descriptionLines: 2,
           cardHeight: 210,
           accentColor: '#ec4899', // pink
@@ -96,57 +96,57 @@ export default function ItemCard({ item }: ItemCardProps) {
         };
       case 'Photography':
         return {
-          imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 270,
+          imageHeight: 160,
+          descriptionLines: 7,
+          cardHeight: 350,
           accentColor: '#6366f1', // indigo
           iconSize: 18
         };
       case 'Audio':
         return {
-          imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 250,
+          imageHeight: 150,
+          descriptionLines: 5,
+          cardHeight: 300,
           accentColor: '#0ea5e9', // sky blue
           iconSize: 16
         };
       case 'Sports':
         return {
-          imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 260,
+          imageHeight: 150,
+          descriptionLines: 7,
+          cardHeight: 340,
           accentColor: '#ef4444', // red
           iconSize: 18
         };
       case 'Kitchen':
         return {
           imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 250,
+          descriptionLines: 6,
+          cardHeight: 310,
           accentColor: '#f97316', // orange
           iconSize: 16
         };
       case 'Home & Garden':
         return {
-          imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 270,
+          imageHeight: 150,
+          descriptionLines: 8,
+          cardHeight: 360,
           accentColor: '#22c55e', // green
           iconSize: 16
         };
       case 'Toys & Games':
         return {
           imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 240,
+          descriptionLines: 4,
+          cardHeight: 270,
           accentColor: '#a855f7', // purple
           iconSize: 16
         };
       default:
         return {
           imageHeight: 140,
-          descriptionLines: 3,
-          cardHeight: 250,
+          descriptionLines: 5,
+          cardHeight: 300,
           accentColor: '#4f46e5', // indigo
           iconSize: 16
         };
@@ -154,6 +154,9 @@ export default function ItemCard({ item }: ItemCardProps) {
   };
 
   const { imageHeight, descriptionLines, cardHeight, accentColor, iconSize } = getCategoryStyles();
+
+  // Calculate if the description is long enough to need truncation
+  const needsTruncation = item.description.length > (descriptionLines * 40); // Rough estimate of characters per line
 
   return (
     <Link href={`/marketplace/${item.id}`} className="block h-full">
@@ -271,7 +274,7 @@ export default function ItemCard({ item }: ItemCardProps) {
           <p style={{
             fontSize: "16px",
             fontWeight: "700",
-            marginBottom: "4px",
+            marginBottom: "8px",
             color: accentColor
           }}>
             ${item.price.toLocaleString()}
@@ -288,19 +291,19 @@ export default function ItemCard({ item }: ItemCardProps) {
               WebkitLineClamp: descriptionLines,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
-              lineHeight: "1.3",
+              lineHeight: "1.4",
               marginBottom: "4px"
             }}>
               {item.description}
             </p>
-            {/* Only show gradient fade if description is longer than displayed lines */}
-            {item.description.length > 50 && (
+            {/* Only show gradient fade if description needs truncation */}
+            {needsTruncation && (
               <div style={{
                 position: "absolute",
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: "20px",
+                height: "24px",
                 background: "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))"
               }}></div>
             )}
