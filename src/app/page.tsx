@@ -289,9 +289,11 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 auto-rows-auto">
                     {filteredItems.map((item) => (
-                      <ItemCard key={item.id} item={item} />
+                      <div key={item.id} className="h-full">
+                        <ItemCard item={item} />
+                      </div>
                     ))}
                   </div>
                 )}

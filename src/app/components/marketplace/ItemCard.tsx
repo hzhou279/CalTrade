@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MarketplaceItem } from '../../../types/marketplace';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -42,16 +42,26 @@ export default function ItemCard({ item }: ItemCardProps) {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  // Determine number of lines to show based on description length
+  const getDescriptionLines = () => {
+    const length = item.description.length;
+    if (length < 100) return 2;
+    if (length < 200) return 3;
+    if (length < 400) return 4;
+    return 5;
+  };
+
+  const descriptionLines = getDescriptionLines();
+
   return (
-    <Link href={`/marketplace/${item.id}`} className="block">
+    <Link href={`/marketplace/${item.id}`} className="block h-full">
       <div 
-        className="rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer"
+        className="rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer h-full"
         style={{
           borderRadius: "8px",
           overflow: "hidden",
           backgroundColor: "white",
           boxShadow: "0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06)",
-          height: "280px", // Fixed height for all cards
           display: "flex",
           flexDirection: "column",
           position: "relative",
@@ -137,13 +147,14 @@ export default function ItemCard({ item }: ItemCardProps) {
           <div style={{
             flex: "1",
             overflow: "hidden",
-            position: "relative"
+            position: "relative",
+            minHeight: `${descriptionLines * 1.3}em` // Set minimum height based on number of lines
           }}>
             <p style={{
               fontSize: "12px",
               color: "#6b7280",
               display: "-webkit-box",
-              WebkitLineClamp: 3,
+              WebkitLineClamp: descriptionLines,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
               lineHeight: "1.3",
@@ -151,14 +162,17 @@ export default function ItemCard({ item }: ItemCardProps) {
             }}>
               {item.description}
             </p>
-            <div style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: "20px",
-              background: "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))"
-            }}></div>
+            {/* Only show gradient fade if description is longer than displayed lines */}
+            {item.description.length > 50 && (
+              <div style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "20px",
+                background: "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))"
+              }}></div>
+            )}
           </div>
         </div>
         
