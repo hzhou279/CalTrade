@@ -289,30 +289,76 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div style={{ display: "flex", flexWrap: "wrap", margin: "-16px" }}>
-                    {filteredItems.map((item) => {
-                      // Determine if this is a vehicle item
-                      const isVehicle = item.category === 'Vehicles';
+                  <>
+                    <div className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 hidden">
+                      {/* This div is just for responsive classes, actual content is below */}
+                      <div className="hidden"></div>
+                    </div>
+                    
+                    <div className="masonry-grid" style={{ display: "grid", gap: "16px", gridTemplateColumns: "repeat(5, 1fr)" }}>
+                      {(() => {
+                        // Determine number of columns based on screen size
+                        // This will be handled by CSS, but we need to prepare the data
+                        const numColumns = 5; // Default for XL screens
+                        
+                        // Create columns for items
+                        const columns: MarketplaceItem[][] = Array.from({ length: numColumns }, () => []);
+                        let columnIndex = 0;
+                        
+                        // Distribute items across columns
+                        filteredItems.forEach((item) => {
+                          // Special handling for vehicles if needed
+                          // const isVehicle = item.category === 'Vehicles';
+                          
+                          columns[columnIndex].push(item);
+                          columnIndex = (columnIndex + 1) % columns.length;
+                        });
+                        
+                        // Render columns with items
+                        return columns.map((columnItems, colIdx) => (
+                          <div key={`column-${colIdx}`} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                            {columnItems.map((item) => (
+                              <div key={item.id} style={{ width: "100%" }}>
+                                <ItemCard item={item} />
+                              </div>
+                            ))}
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                    
+                    <style jsx>{`
+                      .masonry-grid {
+                        display: grid;
+                        gap: 16px;
+                        grid-template-columns: repeat(1, 1fr);
+                      }
                       
-                      return (
-                        <div 
-                          key={item.id} 
-                          style={{
-                            width: "calc(20% - 32px)",
-                            margin: "16px",
-                            boxSizing: "border-box",
-                            // Responsive styles will be handled by CSS media queries
-                          }}
-                          className={`
-                            w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5
-                            ${isVehicle ? 'sm:w-full md:w-full lg:w-1/4 xl:w-1/5' : ''}
-                          `}
-                        >
-                          <ItemCard item={item} />
-                        </div>
-                      );
-                    })}
-                  </div>
+                      @media (min-width: 640px) {
+                        .masonry-grid {
+                          grid-template-columns: repeat(2, 1fr);
+                        }
+                      }
+                      
+                      @media (min-width: 768px) {
+                        .masonry-grid {
+                          grid-template-columns: repeat(3, 1fr);
+                        }
+                      }
+                      
+                      @media (min-width: 1024px) {
+                        .masonry-grid {
+                          grid-template-columns: repeat(4, 1fr);
+                        }
+                      }
+                      
+                      @media (min-width: 1280px) {
+                        .masonry-grid {
+                          grid-template-columns: repeat(5, 1fr);
+                        }
+                      }
+                    `}</style>
+                  </>
                 )}
               </div>
             </div>
