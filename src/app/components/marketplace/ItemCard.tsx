@@ -94,100 +94,86 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   // Determine card properties based on item category
   const getCategoryStyles = () => {
-    // Define different sizes for different categories with more compact heights
+    // Define different sizes for different categories with variable heights
     const baseImageHeight = window.innerWidth < 640 ? 120 : 140; // Smaller on mobile
-    const baseCardHeight = window.innerWidth < 640 ? 200 : 220; // Smaller on mobile
     const baseIconSize = window.innerWidth < 640 ? 14 : 16; // Smaller on mobile
     
     switch (item.category) {
       case 'Vehicles':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.8, // Taller for vehicles
           accentColor: '#3b82f6', // blue
           iconSize: baseIconSize + 2
         };
       case 'Furniture':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.6, // Tall for furniture
           accentColor: '#8b5cf6', // purple
           iconSize: baseIconSize
         };
       case 'Electronics':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.4, // Medium-tall for electronics
           accentColor: '#10b981', // green
           iconSize: baseIconSize
         };
       case 'Clothing':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.2, // Standard for clothing
           accentColor: '#f43f5e', // pink
           iconSize: baseIconSize
         };
       case 'Books':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.3, // Medium for books
           accentColor: '#f59e0b', // amber
           iconSize: baseIconSize - 2
         };
       case 'Accessories':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.1, // Shorter for accessories
           accentColor: '#ec4899', // pink
           iconSize: baseIconSize - 2
         };
       case 'Photography':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.5, // Medium-tall for photography
           accentColor: '#6366f1', // indigo
           iconSize: baseIconSize
         };
       case 'Audio':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.4, // Medium for audio
           accentColor: '#0ea5e9', // sky blue
           iconSize: baseIconSize
         };
       case 'Sports':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.3, // Medium for sports
           accentColor: '#ef4444', // red
           iconSize: baseIconSize
         };
       case 'Kitchen':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.2, // Standard for kitchen
           accentColor: '#f97316', // orange
           iconSize: baseIconSize
         };
       case 'Home & Garden':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.7, // Taller for home & garden
           accentColor: '#22c55e', // green
           iconSize: baseIconSize
         };
       case 'Toys & Games':
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.2, // Standard for toys & games
           accentColor: '#a855f7', // purple
           iconSize: baseIconSize
         };
       default:
         return {
-          imageHeight: baseImageHeight * 1.5, // Increased by 1.5x
-          cardHeight: baseCardHeight * 1.5, // Reduced height since we're removing description
+          imageHeight: baseImageHeight * 1.3, // Default medium height
           accentColor: '#4f46e5', // indigo
           iconSize: baseIconSize
         };
@@ -206,7 +192,7 @@ export default function ItemCard({ item }: ItemCardProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const { imageHeight, cardHeight, accentColor, iconSize } = styles;
+  const { imageHeight, accentColor, iconSize } = styles;
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
@@ -237,7 +223,6 @@ export default function ItemCard({ item }: ItemCardProps) {
           position: "relative",
           cursor: "pointer",
           border: `2px solid ${accentColor}40`,
-          height: `${cardHeight}px`, // Fixed height based on category
           width: "100%", // Take full width of parent
         }}
       >
@@ -285,14 +270,24 @@ export default function ItemCard({ item }: ItemCardProps) {
           )}
           
           {/* Category badge */}
-          <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-white/85 backdrop-blur-[2px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium z-5"
-            style={{ color: accentColor }}
+          <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-white px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold z-5 shadow-md"
+            style={{ 
+              color: accentColor,
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              border: `1px solid ${accentColor}`,
+            }}
           >
             {item.category}
           </div>
           
           {/* Condition badge */}
-          <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-white/85 backdrop-blur-[2px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium z-5">
+          <div className="absolute top-1 sm:top-2 right-1 sm:right-2 bg-white px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold z-5 shadow-md"
+            style={{ 
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              color: "rgba(75, 85, 99, 1)",
+              border: "1px solid rgba(209, 213, 219, 1)"
+            }}
+          >
             {item.condition}
           </div>
         </div>

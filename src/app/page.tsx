@@ -193,17 +193,43 @@ export default function MarketplacePage() {
                         // Create columns for items
                         const columns: MarketplaceItem[][] = Array.from({ length: numColumns }, () => []);
                         
-                        // Distribute items across columns
-                        filteredItems.forEach((item, index) => {
-                          const columnIndex = index % numColumns;
-                          columns[columnIndex].push(item);
+                        // Distribute items across columns - improved algorithm for masonry layout
+                        // This helps balance columns better with variable height items
+                        const columnHeights = Array(numColumns).fill(0);
+                        
+                        filteredItems.forEach((item) => {
+                          // Find the column with the smallest height
+                          const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+                          columns[shortestColumnIndex].push(item);
+                          
+                          // Update the column height - approximate based on category
+                          // This is a heuristic to help balance columns
+                          let heightFactor = 1;
+                          switch (item.category) {
+                            case 'Vehicles': heightFactor = 1.8; break;
+                            case 'Furniture': heightFactor = 1.6; break;
+                            case 'Electronics': heightFactor = 1.4; break;
+                            case 'Clothing': heightFactor = 1.2; break;
+                            case 'Books': heightFactor = 1.3; break;
+                            case 'Accessories': heightFactor = 1.1; break;
+                            case 'Photography': heightFactor = 1.5; break;
+                            case 'Audio': heightFactor = 1.4; break;
+                            case 'Sports': heightFactor = 1.3; break;
+                            case 'Kitchen': heightFactor = 1.2; break;
+                            case 'Home & Garden': heightFactor = 1.7; break;
+                            case 'Toys & Games': heightFactor = 1.2; break;
+                            default: heightFactor = 1.3;
+                          }
+                          
+                          // Base height + image height factor + content height
+                          columnHeights[shortestColumnIndex] += 200 * heightFactor;
                         });
                         
                         // Render columns with items
                         return columns.map((columnItems, colIdx) => (
                           <div key={`column-${colIdx}`} className="masonry-column">
                             {columnItems.map((item) => (
-                              <div key={item.id} className="mb-3 sm:mb-4">
+                              <div key={item.id} className="mb-4 sm:mb-5">
                                 <ItemCard item={item} />
                               </div>
                             ))}
@@ -217,19 +243,20 @@ export default function MarketplacePage() {
                       .masonry-grid {
                         display: grid;
                         grid-template-columns: repeat(2, 1fr);
-                        gap: 12px;
+                        gap: 16px;
                       }
                       
                       @media (min-width: 640px) {
                         .masonry-grid {
                           grid-template-columns: repeat(3, 1fr);
-                          gap: 16px;
+                          gap: 20px;
                         }
                       }
                       
                       @media (min-width: 1024px) {
                         .masonry-grid {
                           grid-template-columns: repeat(4, 1fr);
+                          gap: 24px;
                         }
                       }
                       
