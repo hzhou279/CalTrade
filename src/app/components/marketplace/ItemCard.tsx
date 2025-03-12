@@ -51,22 +51,43 @@ export default function ItemCard({ item }: ItemCardProps) {
     if (!animating) {
       setAnimating(true);
       
-      // Start the animation
+      // Start the animation sequence
       if (cardRef.current) {
-        cardRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-        cardRef.current.style.transform = 'scale(1.05)';
-        cardRef.current.style.opacity = '0.9';
+        // Initial subtle scale
+        cardRef.current.style.transition = 'transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease-out';
+        cardRef.current.style.transform = 'scale(1.03)';
+        cardRef.current.style.opacity = '0.95';
         
-        // After a short delay, show the modal
+        // After a short delay, continue with more pronounced animation
         setTimeout(() => {
-          setShowModal(true);
-          // Reset the card style after modal is shown
           if (cardRef.current) {
-            cardRef.current.style.transform = 'scale(1)';
-            cardRef.current.style.opacity = '1';
+            cardRef.current.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease-out';
+            cardRef.current.style.transform = 'scale(1.08)';
+            cardRef.current.style.opacity = '0.9';
+            
+            // Final animation before showing modal
+            setTimeout(() => {
+              if (cardRef.current) {
+                cardRef.current.style.transition = 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out';
+                cardRef.current.style.transform = 'scale(1.12)';
+                cardRef.current.style.opacity = '0.8';
+                
+                // Show modal and reset card
+                setTimeout(() => {
+                  setShowModal(true);
+                  
+                  // Reset the card style after modal is shown
+                  if (cardRef.current) {
+                    cardRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                    cardRef.current.style.transform = 'scale(1)';
+                    cardRef.current.style.opacity = '1';
+                  }
+                  setAnimating(false);
+                }, 150);
+              }
+            }, 100);
           }
-          setAnimating(false);
-        }, 300);
+        }, 100);
       }
     }
   };

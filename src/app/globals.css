@@ -206,13 +206,29 @@ a {
 @keyframes cardExpand {
   0% {
     transform: scale(1);
+    opacity: 1;
   }
-  50% {
+  30% {
     transform: scale(1.05);
+    opacity: 0.95;
+  }
+  60% {
+    transform: scale(1.1);
     opacity: 0.9;
   }
   100% {
-    transform: scale(1.1);
-    opacity: 0;
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+@keyframes cardShrink {
+  0% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
