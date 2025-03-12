@@ -23,6 +23,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   role          String?   @default("user")
+  items         Item[]    @relation("UserItems")
 }
 
 model Account {
@@ -57,4 +58,24 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Item {
+  id          String   @id @default(uuid())
+  title       String
+  description String   @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String
+  imageUrl    String?
+  category    String
+  condition   String
+  location    String?
+  sellerId    String
+  sellerName  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  seller      User     @relation("UserItems", fields: [sellerId], references: [id])
+
+  @@index([sellerId])
+  @@index([category])
 }
