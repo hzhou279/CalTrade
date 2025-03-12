@@ -172,7 +172,6 @@ export default function ItemCard({ item }: ItemCardProps) {
           position: "relative",
           cursor: "pointer",
           border: `1px solid ${accentColor}25`,
-          height: `${cardHeight}px`, // Fixed height based on category
           width: "100%", // Take full width of parent
         }}
       >
@@ -258,7 +257,7 @@ export default function ItemCard({ item }: ItemCardProps) {
           flex: "1", 
           display: "flex", 
           flexDirection: "column",
-          height: `${cardHeight - imageHeight - 28}px` // Calculate content height (28px for footer)
+          minHeight: `${cardHeight - imageHeight - 28}px` // Use minHeight instead of fixed height
         }}>
           <h3 style={{
             fontSize: "13px",
