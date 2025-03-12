@@ -50,6 +50,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Protected routes that require authentication
+  if (
+    (pathname.startsWith('/marketplace/my-items') ||
+    pathname.startsWith('/marketplace/new') ||
+    pathname.startsWith('/admin')) && 
+    !token
+  ) {
+    return NextResponse.redirect(new URL('/auth/signin', request.url));
+  }
+
   return NextResponse.next();
 }
 

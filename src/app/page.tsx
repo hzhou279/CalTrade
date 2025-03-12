@@ -104,9 +104,26 @@ export default function MarketplacePage() {
         </div>
         <nav style={{
           display: "flex",
-          gap: "24px"
+          gap: "24px",
+          alignItems: "center"
         }}>
           <Link href="/" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Marketplace</Link>
+          <Link 
+            href="/marketplace/new" 
+            style={{ 
+              color: "white", 
+              textDecoration: "none", 
+              fontSize: "16px",
+              backgroundColor: "#22c55e",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }}
+          >
+            <span style={{ fontSize: "18px", lineHeight: 1 }}>+</span> Post Item
+          </Link>
           <Link href="/auth/signin" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Sign In</Link>
           <Link href="/auth/signup" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Sign Up</Link>
         </nav>
@@ -152,20 +169,21 @@ export default function MarketplacePage() {
               </p>
             </div>
             
-            {/* Quick Search Bar */}
+            {/* Search and Filters Row */}
             <div style={{
-              marginBottom: "24px",
+              marginBottom: "16px", // Reduced from 24px
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "space-between",
               alignItems: "center",
-              gap: "8px"
+              gap: "16px"
             }}>
+              {/* Search Form */}
               <form 
                 onSubmit={handleQuickSearch}
                 style={{
                   display: "flex",
                   flex: 1,
-                  maxWidth: "600px"
+                  maxWidth: "800px"
                 }}
               >
                 <div style={{
@@ -182,8 +200,9 @@ export default function MarketplacePage() {
                       width: "100%",
                       padding: "12px 16px",
                       paddingLeft: "40px",
-                      borderRadius: "8px",
+                      borderRadius: "8px 0 0 8px",
                       border: "2px solid #e5e7eb",
+                      borderRight: "none",
                       fontSize: "16px",
                       outline: "none",
                       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
@@ -205,49 +224,54 @@ export default function MarketplacePage() {
                       backgroundColor: "#4f46e5",
                       color: "white",
                       border: "none",
-                      borderRadius: "0 8px 8px 0",
+                      borderRadius: "0",
                       padding: "0 16px",
                       cursor: "pointer"
                     }}
                   >
                     Search
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowFilters(!showFilters)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      backgroundColor: showFilters ? "#f3f4f6" : "#4f46e5",
+                      color: showFilters ? "#4f46e5" : "white",
+                      border: "none",
+                      borderRadius: "0 8px 8px 0",
+                      padding: "10px 16px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      borderLeft: showFilters ? "1px solid #e5e7eb" : "1px solid rgba(255,255,255,0.2)"
+                    }}
+                  >
+                    {showFilters ? (
+                      <>
+                        <X size={18} />
+                        Hide Filters
+                      </>
+                    ) : (
+                      <>
+                        <SlidersHorizontal size={18} />
+                        Filters
+                      </>
+                    )}
+                  </button>
                 </div>
               </form>
               
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  backgroundColor: showFilters ? "#f3f4f6" : "#4f46e5",
-                  color: showFilters ? "#4f46e5" : "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  padding: "10px 16px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  whiteSpace: "nowrap"
-                }}
-              >
-                {showFilters ? (
-                  <>
-                    <X size={18} />
-                    Hide Filters
-                  </>
-                ) : (
-                  <>
-                    <SlidersHorizontal size={18} />
-                    Advanced Filters
-                  </>
-                )}
-              </button>
+              {/* Sort By Dropdown */}
+              <div className="text-sm text-gray-500 flex items-center whitespace-nowrap">
+                Sort by: <span className="font-medium ml-1">Newest first</span>
+              </div>
             </div>
             
-            <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex flex-col md:flex-row gap-6"> {/* Reduced gap from 8 to 6 */}
               {/* Sidebar with filters - hidden by default */}
               {showFilters && (
                 <div className="w-full md:w-1/4 bg-white p-6 rounded-lg border border-gray-200">
@@ -257,13 +281,6 @@ export default function MarketplacePage() {
               
               {/* Main content with items */}
               <div className={`w-full ${showFilters ? 'md:w-3/4' : 'md:w-full'}`}>
-                {/* Results summary - hidden as requested */}
-                <div className="mb-6 flex justify-end items-center">
-                  <div className="text-sm text-gray-500">
-                    Sort by: <span className="font-medium">Newest first</span>
-                  </div>
-                </div>
-                
                 {isLoading ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {[...Array(10)].map((_, index) => (

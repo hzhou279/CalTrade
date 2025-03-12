@@ -245,9 +245,9 @@ export default function ItemCard({ item }: ItemCardProps) {
           height: `${cardHeight - imageHeight - 28}px` // Calculate content height (28px for footer)
         }}>
           <h3 style={{
-            fontSize: "18px",
+            fontSize: "16px",
             fontWeight: "600",
-            marginBottom: "8px",
+            marginBottom: "6px",
             color: "#111827",
             display: "-webkit-box",
             WebkitLineClamp: 2,
@@ -258,7 +258,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             {item.title}
           </h3>
           <p style={{
-            fontSize: "20px",
+            fontSize: "18px",
             fontWeight: "700",
             color: accentColor
           }}>
