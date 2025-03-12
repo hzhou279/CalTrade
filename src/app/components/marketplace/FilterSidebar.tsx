@@ -59,146 +59,142 @@ export default function FilterSidebar({ onFilterChange, currentFilters }: Filter
   };
 
   return (
-    <div className="space-y-4">
-      <div className="mb-4">
-        <h3 className="text-base font-semibold mb-2 text-gray-800">Refine Results</h3>
-        <p className="text-xs text-gray-500">Use these filters to narrow down your search</p>
-      </div>
+    <div className="text-sm">
+      <h3 className="font-semibold text-base mb-3">Filters</h3>
       
       {/* Categories Section */}
-      <div className="border-b pb-3">
-        <div 
-          className="flex justify-between items-center cursor-pointer mb-2"
+      <div className="mb-4">
+        <button 
           onClick={() => toggleSection('categories')}
+          className="flex justify-between items-center w-full text-left font-medium mb-2"
         >
-          <h3 className="text-sm font-semibold text-gray-700">Categories</h3>
-          {expandedSections.categories ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
+          Categories
+          {expandedSections.categories ? 
+            <ChevronUp size={16} className="text-gray-500" /> : 
+            <ChevronDown size={16} className="text-gray-500" />
+          }
+        </button>
         
         {expandedSections.categories && (
-          <div className="space-y-1 max-h-40 overflow-y-auto pr-2">
-            <div className="flex items-center mb-1">
-              <input
-                type="radio"
-                id="category-all"
-                name="category"
-                checked={selectedCategory === ''}
-                onChange={() => setSelectedCategory('')}
-                className="mr-2 h-3 w-3"
-              />
-              <label htmlFor="category-all" className="text-xs text-gray-700">All Categories</label>
+          <div className="space-y-2 pl-1">
+            <div 
+              className={`cursor-pointer py-1 px-2 rounded-md ${selectedCategory === '' ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100'}`}
+              onClick={() => setSelectedCategory('')}
+            >
+              All Categories
             </div>
+            
             {displayedCategories.map((category) => (
-              <div key={category.id} className="flex items-center">
-                <input
-                  type="radio"
-                  id={`category-${category.id}`}
-                  name="category"
-                  checked={selectedCategory === category.name}
-                  onChange={() => setSelectedCategory(category.name)}
-                  className="mr-2 h-3 w-3"
-                />
-                <label htmlFor={`category-${category.id}`} className="text-xs text-gray-700">{category.name}</label>
+              <div 
+                key={category.id}
+                className={`cursor-pointer py-1 px-2 rounded-md ${selectedCategory === category.name ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100'}`}
+                onClick={() => setSelectedCategory(category.name)}
+              >
+                {category.name}
               </div>
             ))}
+            
             {marketplaceCategories.length > 4 && (
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowAllCategories(!showAllCategories);
-                }}
-                className="text-xs text-blue-600 hover:text-blue-800 mt-1"
+              <button
+                onClick={() => setShowAllCategories(!showAllCategories)}
+                className="text-indigo-600 hover:text-indigo-800 text-xs mt-1 font-medium"
               >
-                {showAllCategories ? 'Show Less' : 'Show More'}
+                {showAllCategories ? 'Show Less' : `Show All (${marketplaceCategories.length})`}
               </button>
             )}
           </div>
         )}
       </div>
-
+      
       {/* Price Range Section */}
-      <div className="border-b pb-3">
-        <div 
-          className="flex justify-between items-center cursor-pointer mb-2"
+      <div className="mb-4">
+        <button 
           onClick={() => toggleSection('price')}
+          className="flex justify-between items-center w-full text-left font-medium mb-2"
         >
-          <h3 className="text-sm font-semibold text-gray-700">Price Range</h3>
-          {expandedSections.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
+          Price Range
+          {expandedSections.price ? 
+            <ChevronUp size={16} className="text-gray-500" /> : 
+            <ChevronDown size={16} className="text-gray-500" />
+          }
+        </button>
         
         {expandedSections.price && (
-          <div className="flex space-x-2">
-            <input
-              type="number"
-              placeholder="Min"
-              className="w-full p-1 border rounded-md text-xs"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-            />
-            <span className="self-center text-xs">-</span>
-            <input
-              type="number"
-              placeholder="Max"
-              className="w-full p-1 border rounded-md text-xs"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-            />
+          <div className="space-y-2 pl-1">
+            <div className="flex items-center gap-2">
+              <div className="w-1/2">
+                <label className="block text-xs text-gray-500 mb-1">Min ($)</label>
+                <input
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  placeholder="0"
+                  className="w-full p-1.5 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-xs text-gray-500 mb-1">Max ($)</label>
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  placeholder="Any"
+                  className="w-full p-1.5 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>
-
+      
       {/* Condition Section */}
-      <div className="border-b pb-3">
-        <div 
-          className="flex justify-between items-center cursor-pointer mb-2"
+      <div className="mb-4">
+        <button 
           onClick={() => toggleSection('condition')}
+          className="flex justify-between items-center w-full text-left font-medium mb-2"
         >
-          <h3 className="text-sm font-semibold text-gray-700">Condition</h3>
-          {expandedSections.condition ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </div>
+          Condition
+          {expandedSections.condition ? 
+            <ChevronUp size={16} className="text-gray-500" /> : 
+            <ChevronDown size={16} className="text-gray-500" />
+          }
+        </button>
         
         {expandedSections.condition && (
-          <div className="space-y-1">
-            <div className="flex items-center mb-1">
-              <input
-                type="radio"
-                id="condition-all"
-                name="condition"
-                checked={selectedCondition === ''}
-                onChange={() => setSelectedCondition('')}
-                className="mr-2 h-3 w-3"
-              />
-              <label htmlFor="condition-all" className="text-xs text-gray-700">Any Condition</label>
+          <div className="space-y-2 pl-1">
+            <div 
+              className={`cursor-pointer py-1 px-2 rounded-md ${selectedCondition === '' ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100'}`}
+              onClick={() => setSelectedCondition('')}
+            >
+              Any Condition
             </div>
+            
             {conditions.map((condition) => (
-              <div key={condition} className="flex items-center">
-                <input
-                  type="radio"
-                  id={`condition-${condition}`}
-                  name="condition"
-                  checked={selectedCondition === condition}
-                  onChange={() => setSelectedCondition(condition)}
-                  className="mr-2 h-3 w-3"
-                />
-                <label htmlFor={`condition-${condition}`} className="text-xs text-gray-700">{condition}</label>
+              <div 
+                key={condition}
+                className={`cursor-pointer py-1 px-2 rounded-md ${selectedCondition === condition ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100'}`}
+                onClick={() => setSelectedCondition(condition)}
+              >
+                {condition}
               </div>
             ))}
           </div>
         )}
       </div>
-
-      <div className="flex space-x-2 pt-2">
+      
+      {/* Action Buttons */}
+      <div className="flex gap-2 mt-6">
         <button
           onClick={handleApplyFilters}
-          className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 flex-1 text-xs font-medium"
+          className="flex-1 bg-indigo-600 text-white py-2 px-3 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
         >
           Apply Filters
         </button>
         <button
           onClick={handleClearFilters}
-          className="bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md hover:bg-gray-300 text-xs font-medium"
+          className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors"
         >
-          Clear
+          Clear All
         </button>
       </div>
     </div>

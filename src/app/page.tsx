@@ -64,217 +64,86 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      width: "100%",
-      margin: 0,
-      padding: 0,
-      display: "flex",
-      flexDirection: "column",
-      background: "linear-gradient(135deg, #4f46e5 0%, #7e22ce 50%, #ec4899 100%)",
-      position: "relative"
-    }}>
-      {/* Background Decoration */}
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: "radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent)"
-      }}></div>
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: "radial-gradient(circle at bottom left, rgba(255,255,255,0.1), transparent)"
-      }}></div>
+    <>
+      <MarketplaceHeader />
       
-      {/* Header */}
-      <header style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "16px 24px",
-        position: "relative",
-        zIndex: 10
-      }}>
-        <div style={{
-          fontSize: "28px",
-          fontWeight: "bold",
-          color: "white"
-        }}>
-          CalTrade
-        </div>
-        <nav style={{
-          display: "flex",
-          gap: "24px",
-          alignItems: "center"
-        }}>
-          <Link href="/" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Marketplace</Link>
-          <Link 
-            href="/marketplace/new" 
-            style={{ 
-              color: "white", 
-              textDecoration: "none", 
-              fontSize: "16px",
-              backgroundColor: "#22c55e",
-              padding: "8px 16px",
-              borderRadius: "8px",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px"
-            }}
-          >
-            <span style={{ fontSize: "18px", lineHeight: 1 }}>+</span> Post Item
-          </Link>
-          <Link href="/auth/signin" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Sign In</Link>
-          <Link href="/auth/signup" style={{ color: "white", textDecoration: "none", fontSize: "16px" }}>Sign Up</Link>
-        </nav>
-      </header>
-      
-      {/* Main Content */}
-      <main style={{
-        flex: 1,
-        display: "flex",
-        justifyContent: "center",
-        padding: "16px",
-        position: "relative",
-        zIndex: 10,
-        overflowY: "auto"
-      }}>
+      <main className="flex justify-center p-2 sm:p-4 md:p-6 relative z-10 overflow-y-auto">
         {/* Card Container */}
-        <div style={{
-          width: "100%",
-          maxWidth: "1400px", // Increased from 1200px
-          backgroundColor: "white",
-          borderRadius: "16px",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          overflow: "hidden",
-          margin: "auto"
-        }}>
-          <div style={{ padding: "32px" }}>
+        <div className="w-full max-w-[1400px] bg-white rounded-lg sm:rounded-xl shadow-lg sm:shadow-xl overflow-hidden mx-auto">
+          <div className="p-3 sm:p-4 md:p-6 lg:p-8">
             {/* Card Header */}
-            <div style={{ textAlign: "center", marginBottom: "24px" }}>
-              <h2 style={{ 
-                fontSize: "30px", 
-                fontWeight: "bold", 
-                color: "#111827",
-                margin: "0 0 8px 0"
-              }}>
+            <div className="text-center mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                 CalTrade Marketplace
               </h2>
-              <p style={{ 
-                fontSize: "16px", 
-                color: "#6b7280",
-                margin: 0
-              }}>
+              <p className="text-sm sm:text-base text-gray-600">
                 Buy and sell items in the Berkeley community
               </p>
             </div>
             
             {/* Search and Filters Row */}
-            <div style={{
-              marginBottom: "16px", // Reduced from 24px
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "16px"
-            }}>
+            <div className="mb-4 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-4">
               {/* Search Form */}
               <form 
                 onSubmit={handleQuickSearch}
-                style={{
-                  display: "flex",
-                  flex: 1,
-                  maxWidth: "800px"
-                }}
+                className="flex flex-1 max-w-full sm:max-w-[800px]"
               >
-                <div style={{
-                  position: "relative",
-                  width: "100%",
-                  display: "flex"
-                }}>
-                  <input
-                    type="text"
-                    placeholder="Search items..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "12px 16px",
-                      paddingLeft: "40px",
-                      borderRadius: "8px 0 0 8px",
-                      border: "2px solid #e5e7eb",
-                      borderRight: "none",
-                      fontSize: "16px",
-                      outline: "none",
-                      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
-                    }}
-                  />
-                  <Search 
-                    size={20} 
-                    style={{
-                      position: "absolute",
-                      left: "12px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      color: "#9ca3af"
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    style={{
-                      backgroundColor: "#4f46e5",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "0",
-                      padding: "0 16px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Search
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowFilters(!showFilters)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      backgroundColor: showFilters ? "#f3f4f6" : "#4f46e5",
-                      color: showFilters ? "#4f46e5" : "white",
-                      border: "none",
-                      borderRadius: "0 8px 8px 0",
-                      padding: "10px 16px",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.2s",
-                      borderLeft: showFilters ? "1px solid #e5e7eb" : "1px solid rgba(255,255,255,0.2)"
-                    }}
-                  >
-                    {showFilters ? (
-                      <>
-                        <X size={18} />
-                        Hide Filters
-                      </>
-                    ) : (
-                      <>
-                        <SlidersHorizontal size={18} />
-                        Filters
-                      </>
-                    )}
-                  </button>
+                <div className="relative w-full flex flex-col sm:flex-row">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      placeholder="Search items..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full py-2 px-3 pl-9 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none border-2 border-gray-200 text-sm sm:text-base focus:outline-none focus:border-indigo-500"
+                    />
+                    <Search 
+                      size={18} 
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    />
+                  </div>
+                  <div className="flex">
+                    <button
+                      type="submit"
+                      className="bg-indigo-600 text-white border-none py-2 px-3 sm:px-4 text-sm sm:text-base font-medium"
+                    >
+                      Search
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className={`flex items-center gap-1 sm:gap-2 ${
+                        showFilters ? "bg-gray-100 text-indigo-600" : "bg-indigo-600 text-white"
+                      } border-none rounded-b-lg sm:rounded-r-lg sm:rounded-bl-none py-2 px-3 sm:px-4 text-xs sm:text-sm font-medium cursor-pointer transition-all duration-200 ${
+                        showFilters ? "border-l border-gray-200" : "border-l border-indigo-500"
+                      }`}
+                    >
+                      {showFilters ? (
+                        <>
+                          <X size={16} />
+                          <span className="hidden xs:inline">Hide</span> Filters
+                        </>
+                      ) : (
+                        <>
+                          <SlidersHorizontal size={16} />
+                          Filters
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </form>
               
               {/* Sort By Dropdown */}
-              <div className="text-sm text-gray-500 flex items-center whitespace-nowrap">
+              <div className="text-xs sm:text-sm text-gray-500 flex items-center whitespace-nowrap justify-end mt-2 sm:mt-0">
                 Sort by: <span className="font-medium ml-1">Newest first</span>
               </div>
             </div>
             
-            <div className="flex flex-col md:flex-row gap-6"> {/* Reduced gap from 8 to 6 */}
+            <div className="flex flex-col md:flex-row gap-4">
               {/* Sidebar with filters - hidden by default */}
               {showFilters && (
-                <div className="w-full md:w-1/4 bg-white p-6 rounded-lg border border-gray-200">
+                <div className="w-full md:w-1/4 bg-white p-3 sm:p-4 md:p-6 rounded-lg border border-gray-200">
                   <FilterSidebar onFilterChange={setFilters} currentFilters={filters} />
                 </div>
               )}
@@ -282,7 +151,7 @@ export default function MarketplacePage() {
               {/* Main content with items */}
               <div className={`w-full ${showFilters ? 'md:w-3/4' : 'md:w-full'}`}>
                 {isLoading ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                     {[...Array(10)].map((_, index) => (
                       <div key={index} className="bg-white rounded-lg shadow-sm h-64 animate-pulse">
                         <div className="bg-gray-200 h-32 rounded-t-lg"></div>
@@ -302,74 +171,32 @@ export default function MarketplacePage() {
                   </div>
                 ) : (
                   <>
-                    <div className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 hidden">
-                      {/* This div is just for responsive classes, actual content is below */}
-                      <div className="hidden"></div>
+                    {/* Mobile grid (1-2 columns) */}
+                    <div className="grid grid-cols-2 gap-3 sm:hidden">
+                      {filteredItems.map((item) => (
+                        <div key={item.id} className="w-full">
+                          <ItemCard item={item} />
+                        </div>
+                      ))}
                     </div>
                     
-                    <div className="masonry-grid" style={{ display: "grid", gap: "16px", gridTemplateColumns: "repeat(5, 1fr)" }}>
-                      {(() => {
-                        // Determine number of columns based on screen size
-                        // This will be handled by CSS, but we need to prepare the data
-                        const numColumns = 5; // Default for XL screens
-                        
-                        // Create columns for items
-                        const columns: MarketplaceItem[][] = Array.from({ length: numColumns }, () => []);
-                        let columnIndex = 0;
-                        
-                        // Distribute items across columns
-                        filteredItems.forEach((item) => {
-                          // Special handling for vehicles if needed
-                          // const isVehicle = item.category === 'Vehicles';
-                          
-                          columns[columnIndex].push(item);
-                          columnIndex = (columnIndex + 1) % columns.length;
-                        });
-                        
-                        // Render columns with items
-                        return columns.map((columnItems, colIdx) => (
-                          <div key={`column-${colIdx}`} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                            {columnItems.map((item) => (
-                              <div key={item.id} style={{ width: "100%" }}>
-                                <ItemCard item={item} />
-                              </div>
-                            ))}
-                          </div>
-                        ));
-                      })()}
+                    {/* Tablet grid (3 columns) */}
+                    <div className="hidden sm:grid md:hidden grid-cols-3 gap-3">
+                      {filteredItems.map((item) => (
+                        <div key={item.id} className="w-full">
+                          <ItemCard item={item} />
+                        </div>
+                      ))}
                     </div>
                     
-                    <style jsx>{`
-                      .masonry-grid {
-                        display: grid;
-                        gap: 16px;
-                        grid-template-columns: repeat(1, 1fr);
-                      }
-                      
-                      @media (min-width: 640px) {
-                        .masonry-grid {
-                          grid-template-columns: repeat(2, 1fr);
-                        }
-                      }
-                      
-                      @media (min-width: 768px) {
-                        .masonry-grid {
-                          grid-template-columns: repeat(3, 1fr);
-                        }
-                      }
-                      
-                      @media (min-width: 1024px) {
-                        .masonry-grid {
-                          grid-template-columns: repeat(4, 1fr);
-                        }
-                      }
-                      
-                      @media (min-width: 1280px) {
-                        .masonry-grid {
-                          grid-template-columns: repeat(5, 1fr);
-                        }
-                      }
-                    `}</style>
+                    {/* Desktop grid (4-5 columns) */}
+                    <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                      {filteredItems.map((item) => (
+                        <div key={item.id} className="w-full">
+                          <ItemCard item={item} />
+                        </div>
+                      ))}
+                    </div>
                   </>
                 )}
               </div>
@@ -378,18 +205,16 @@ export default function MarketplacePage() {
         </div>
       </main>
       
-      {/* Footer */}
-      <footer style={{
-        padding: "16px 24px",
-        textAlign: "center",
-        color: "white",
-        position: "relative",
-        zIndex: 10
-      }}>
-        <p style={{ margin: 0, fontSize: "14px" }}>
-          © 2023 CalTrade. All rights reserved.
-        </p>
-      </footer>
-    </div>
+      {/* Post Item Button - Fixed position */}
+      <Link
+        href="/marketplace/new"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full p-3 shadow-lg flex items-center justify-center transition-all duration-200 z-20"
+      >
+        <div className="flex items-center">
+          <span className="text-2xl mr-1">+</span>
+          <span className="hidden sm:inline font-medium">Post Item</span>
+        </div>
+      </Link>
+    </>
   );
 } 
