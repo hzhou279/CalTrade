@@ -64,7 +64,23 @@ export default function MarketplacePage() {
   };
 
   return (
-    <>
+    <div style={{
+      background: "linear-gradient(135deg, #4f46e5 0%, #7e22ce 50%, #ec4899 100%)",
+      position: "relative",
+      minHeight: "100vh"
+    }}>
+      {/* Background Decoration */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent)"
+      }}></div>
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "radial-gradient(circle at bottom left, rgba(255,255,255,0.1), transparent)"
+      }}></div>
+      
       <MarketplaceHeader />
       
       <main className="flex justify-center p-2 sm:p-4 md:p-6 relative z-10 overflow-y-auto">
@@ -175,17 +191,26 @@ export default function MarketplacePage() {
                     <div className="masonry-grid">
                       {(() => {
                         // Determine number of columns based on screen size
-                        // This will be handled by CSS, but we need to prepare the data
                         const getNumColumns = () => {
                           // Default to 2 columns (mobile)
                           if (typeof window === 'undefined') return 2;
                           
                           const width = window.innerWidth;
-                          if (width < 640) return 2; // Mobile: 2 columns
-                          if (width < 768) return 3; // Tablet: 3 columns
-                          if (width < 1024) return 3; // Small desktop: 3 columns
-                          if (width < 1280) return 4; // Medium desktop: 4 columns
-                          return 5; // Large desktop: 5 columns
+                          // When filters are shown, reduce the number of columns
+                          if (showFilters) {
+                            if (width < 640) return 1; // Mobile with filters: 1 column
+                            if (width < 768) return 2; // Tablet with filters: 2 columns
+                            if (width < 1024) return 2; // Small desktop with filters: 2 columns
+                            if (width < 1280) return 3; // Medium desktop with filters: 3 columns
+                            return 4; // Large desktop with filters: 4 columns
+                          } else {
+                            // Without filters, use more columns
+                            if (width < 640) return 2; // Mobile: 2 columns
+                            if (width < 768) return 3; // Tablet: 3 columns
+                            if (width < 1024) return 3; // Small desktop: 3 columns
+                            if (width < 1280) return 4; // Medium desktop: 4 columns
+                            return 5; // Large desktop: 5 columns
+                          }
                         };
                         
                         const numColumns = getNumColumns();
@@ -266,6 +291,31 @@ export default function MarketplacePage() {
                         }
                       }
                       
+                      /* Adjust grid when filters are shown */
+                      ${showFilters ? `
+                        .masonry-grid {
+                          grid-template-columns: repeat(1, 1fr);
+                        }
+                        
+                        @media (min-width: 640px) {
+                          .masonry-grid {
+                            grid-template-columns: repeat(2, 1fr);
+                          }
+                        }
+                        
+                        @media (min-width: 1024px) {
+                          .masonry-grid {
+                            grid-template-columns: repeat(3, 1fr);
+                          }
+                        }
+                        
+                        @media (min-width: 1280px) {
+                          .masonry-grid {
+                            grid-template-columns: repeat(4, 1fr);
+                          }
+                        }
+                      ` : ''}
+                      
                       .masonry-column {
                         display: flex;
                         flex-direction: column;
@@ -289,6 +339,6 @@ export default function MarketplacePage() {
           <span className="hidden sm:inline font-medium">Post Item</span>
         </div>
       </Link>
-    </>
+    </div>
   );
 } 

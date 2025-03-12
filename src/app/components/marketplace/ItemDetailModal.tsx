@@ -81,6 +81,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
       onClick={handleBackdropClick}
       style={{
         animation: 'fadeIn 0.2s ease-out',
+        zIndex: 100
       }}
     >
       <div 
@@ -93,6 +94,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           maxWidth: '1200px',
           height: '90vh',
           maxHeight: '700px',
+          marginTop: '20px'
         }}
       >
         {/* Left/Top part - Image gallery */}
