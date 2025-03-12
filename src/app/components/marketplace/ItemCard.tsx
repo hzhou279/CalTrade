@@ -48,105 +48,105 @@ export default function ItemCard({ item }: ItemCardProps) {
     switch (item.category) {
       case 'Vehicles':
         return {
-          imageHeight: 160, // Reduced image height
-          descriptionLines: 8, // Still show more description but reduced
-          cardHeight: 380, // Reduced overall height
+          imageHeight: 160 * 1.5, // Increased by 1.5x
+          descriptionLines: 8,
+          cardHeight: 380 * 1.5, // Increased by 1.5x
           accentColor: '#3b82f6', // blue
           iconSize: 18
         };
       case 'Furniture':
         return {
-          imageHeight: 140,
+          imageHeight: 140 * 1.5, // Increased by 1.5x
           descriptionLines: 6,
-          cardHeight: 320,
+          cardHeight: 320 * 1.5, // Increased by 1.5x
           accentColor: '#8b5cf6', // purple
           iconSize: 16
         };
       case 'Electronics':
         return {
-          imageHeight: 130,
+          imageHeight: 130 * 1.5, // Increased by 1.5x
           descriptionLines: 5,
-          cardHeight: 280,
+          cardHeight: 280 * 1.5, // Increased by 1.5x
           accentColor: '#10b981', // green
           iconSize: 16
         };
       case 'Clothing':
         return {
-          imageHeight: 140,
+          imageHeight: 140 * 1.5, // Increased by 1.5x
           descriptionLines: 3,
-          cardHeight: 240,
+          cardHeight: 240 * 1.5, // Increased by 1.5x
           accentColor: '#f43f5e', // pink
           iconSize: 16
         };
       case 'Books':
         return {
-          imageHeight: 130,
+          imageHeight: 130 * 1.5, // Increased by 1.5x
           descriptionLines: 3,
-          cardHeight: 220,
+          cardHeight: 220 * 1.5, // Increased by 1.5x
           accentColor: '#f59e0b', // amber
           iconSize: 14
         };
       case 'Accessories':
         return {
-          imageHeight: 120,
+          imageHeight: 120 * 1.5, // Increased by 1.5x
           descriptionLines: 2,
-          cardHeight: 200,
+          cardHeight: 200 * 1.5, // Increased by 1.5x
           accentColor: '#ec4899', // pink
           iconSize: 14
         };
       case 'Photography':
         return {
-          imageHeight: 140,
+          imageHeight: 140 * 1.5, // Increased by 1.5x
           descriptionLines: 5,
-          cardHeight: 300,
+          cardHeight: 300 * 1.5, // Increased by 1.5x
           accentColor: '#6366f1', // indigo
           iconSize: 16
         };
       case 'Audio':
         return {
-          imageHeight: 130,
+          imageHeight: 130 * 1.5, // Increased by 1.5x
           descriptionLines: 4,
-          cardHeight: 260,
+          cardHeight: 260 * 1.5, // Increased by 1.5x
           accentColor: '#0ea5e9', // sky blue
           iconSize: 16
         };
       case 'Sports':
         return {
-          imageHeight: 140,
+          imageHeight: 140 * 1.5, // Increased by 1.5x
           descriptionLines: 5,
-          cardHeight: 290,
+          cardHeight: 290 * 1.5, // Increased by 1.5x
           accentColor: '#ef4444', // red
           iconSize: 16
         };
       case 'Kitchen':
         return {
-          imageHeight: 130,
+          imageHeight: 130 * 1.5, // Increased by 1.5x
           descriptionLines: 4,
-          cardHeight: 260,
+          cardHeight: 260 * 1.5, // Increased by 1.5x
           accentColor: '#f97316', // orange
           iconSize: 16
         };
       case 'Home & Garden':
         return {
-          imageHeight: 140,
+          imageHeight: 140 * 1.5, // Increased by 1.5x
           descriptionLines: 6,
-          cardHeight: 310,
+          cardHeight: 310 * 1.5, // Increased by 1.5x
           accentColor: '#22c55e', // green
           iconSize: 16
         };
       case 'Toys & Games':
         return {
-          imageHeight: 130,
+          imageHeight: 130 * 1.5, // Increased by 1.5x
           descriptionLines: 3,
-          cardHeight: 230,
+          cardHeight: 230 * 1.5, // Increased by 1.5x
           accentColor: '#a855f7', // purple
           iconSize: 16
         };
       default:
         return {
-          imageHeight: 130,
+          imageHeight: 130 * 1.5, // Increased by 1.5x
           descriptionLines: 4,
-          cardHeight: 250,
+          cardHeight: 250 * 1.5, // Increased by 1.5x
           accentColor: '#4f46e5', // indigo
           iconSize: 16
         };
