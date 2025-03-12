@@ -156,17 +156,16 @@ export default function MarketplacePage() {
             <div style={{
               marginBottom: "24px",
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "center",
               alignItems: "center",
-              gap: "16px"
+              gap: "8px"
             }}>
               <form 
                 onSubmit={handleQuickSearch}
                 style={{
                   display: "flex",
                   flex: 1,
-                  maxWidth: "600px",
-                  margin: "0 auto"
+                  maxWidth: "600px"
                 }}
               >
                 <div style={{
@@ -184,7 +183,7 @@ export default function MarketplacePage() {
                       padding: "12px 16px",
                       paddingLeft: "40px",
                       borderRadius: "8px",
-                      border: "1px solid #e5e7eb",
+                      border: "2px solid #e5e7eb",
                       fontSize: "16px",
                       outline: "none",
                       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
@@ -230,7 +229,8 @@ export default function MarketplacePage() {
                   fontSize: "14px",
                   fontWeight: "500",
                   cursor: "pointer",
-                  transition: "all 0.2s"
+                  transition: "all 0.2s",
+                  whiteSpace: "nowrap"
                 }}
               >
                 {showFilters ? (
@@ -257,13 +257,8 @@ export default function MarketplacePage() {
               
               {/* Main content with items */}
               <div className={`w-full ${showFilters ? 'md:w-3/4' : 'md:w-full'}`}>
-                {/* Results summary */}
-                <div className="mb-6 flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">
-                    {isLoading ? 'Loading items...' : 
-                      filteredItems.length === 0 ? 'No items found' : 
-                      `${filteredItems.length} item${filteredItems.length === 1 ? '' : 's'} found`}
-                  </h2>
+                {/* Results summary - hidden as requested */}
+                <div className="mb-6 flex justify-end items-center">
                   <div className="text-sm text-gray-500">
                     Sort by: <span className="font-medium">Newest first</span>
                   </div>
