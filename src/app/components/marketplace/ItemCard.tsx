@@ -159,9 +159,9 @@ export default function ItemCard({ item }: ItemCardProps) {
   const needsTruncation = item.description.length > (descriptionLines * 40); // Rough estimate of characters per line
 
   return (
-    <Link href={`/marketplace/${item.id}`} className="block h-full">
+    <Link href={`/marketplace/${item.id}`} className="block w-full">
       <div 
-        className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer h-full"
+        className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer"
         style={{
           borderRadius: "8px",
           overflow: "hidden",
@@ -173,7 +173,7 @@ export default function ItemCard({ item }: ItemCardProps) {
           cursor: "pointer",
           border: `1px solid ${accentColor}25`,
           height: `${cardHeight}px`, // Fixed height based on category
-          maxWidth: "100%", // Ensure the card doesn't exceed its container width
+          width: "100%", // Take full width of parent
         }}
       >
         <div style={{ 

@@ -289,7 +289,7 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-4">
                     {filteredItems.map((item) => {
                       // Determine column span based on item category
                       let colSpan = "";
@@ -302,7 +302,7 @@ export default function MarketplacePage() {
                       }
                       
                       return (
-                        <div key={item.id} className={`${colSpan}`}>
+                        <div key={item.id} className={`${colSpan} flex`}>
                           <ItemCard item={item} />
                         </div>
                       );
