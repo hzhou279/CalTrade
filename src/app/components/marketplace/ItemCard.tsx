@@ -42,23 +42,23 @@ export default function ItemCard({ item }: ItemCardProps) {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // Determine image height and card properties based on item category
+  // Determine card properties based on item category
   const getCategoryStyles = () => {
     // Define different sizes for different categories
     switch (item.category) {
       case 'Vehicles':
         return {
-          imageHeight: 180,
+          imageHeight: 140, // Fixed image height
           descriptionLines: 4,
-          aspectRatio: '16/9',
+          cardHeight: 320, // Overall card height
           accentColor: '#3b82f6', // blue
           iconSize: 20
         };
       case 'Furniture':
         return {
-          imageHeight: 160,
+          imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '4/3',
+          cardHeight: 280,
           accentColor: '#8b5cf6', // purple
           iconSize: 18
         };
@@ -66,55 +66,55 @@ export default function ItemCard({ item }: ItemCardProps) {
         return {
           imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '1/1',
+          cardHeight: 260,
           accentColor: '#10b981', // green
           iconSize: 16
         };
       case 'Clothing':
         return {
-          imageHeight: 160,
+          imageHeight: 140,
           descriptionLines: 2,
-          aspectRatio: '3/4',
+          cardHeight: 240,
           accentColor: '#f43f5e', // pink
           iconSize: 16
         };
       case 'Books':
         return {
-          imageHeight: 120,
+          imageHeight: 140,
           descriptionLines: 2,
-          aspectRatio: '3/4',
+          cardHeight: 220,
           accentColor: '#f59e0b', // amber
           iconSize: 14
         };
       case 'Accessories':
         return {
-          imageHeight: 110,
+          imageHeight: 140,
           descriptionLines: 2,
-          aspectRatio: '1/1',
+          cardHeight: 210,
           accentColor: '#ec4899', // pink
           iconSize: 14
         };
       case 'Photography':
         return {
-          imageHeight: 150,
+          imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '4/3',
+          cardHeight: 270,
           accentColor: '#6366f1', // indigo
           iconSize: 18
         };
       case 'Audio':
         return {
-          imageHeight: 130,
+          imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '1/1',
+          cardHeight: 250,
           accentColor: '#0ea5e9', // sky blue
           iconSize: 16
         };
       case 'Sports':
         return {
-          imageHeight: 150,
+          imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '4/3',
+          cardHeight: 260,
           accentColor: '#ef4444', // red
           iconSize: 18
         };
@@ -122,23 +122,23 @@ export default function ItemCard({ item }: ItemCardProps) {
         return {
           imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '1/1',
+          cardHeight: 250,
           accentColor: '#f97316', // orange
           iconSize: 16
         };
       case 'Home & Garden':
         return {
-          imageHeight: 150,
+          imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '4/3',
+          cardHeight: 270,
           accentColor: '#22c55e', // green
           iconSize: 16
         };
       case 'Toys & Games':
         return {
-          imageHeight: 130,
+          imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '1/1',
+          cardHeight: 240,
           accentColor: '#a855f7', // purple
           iconSize: 16
         };
@@ -146,35 +146,36 @@ export default function ItemCard({ item }: ItemCardProps) {
         return {
           imageHeight: 140,
           descriptionLines: 3,
-          aspectRatio: '4/3',
+          cardHeight: 250,
           accentColor: '#4f46e5', // indigo
           iconSize: 16
         };
     }
   };
 
-  const { imageHeight, descriptionLines, aspectRatio, accentColor, iconSize } = getCategoryStyles();
+  const { imageHeight, descriptionLines, cardHeight, accentColor, iconSize } = getCategoryStyles();
 
   return (
     <Link href={`/marketplace/${item.id}`} className="block h-full">
       <div 
-        className="rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer h-full"
+        className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col relative cursor-pointer h-full"
         style={{
           borderRadius: "8px",
           overflow: "hidden",
           backgroundColor: "white",
-          boxShadow: "0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06)",
+          boxShadow: "0 1px 3px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06)",
           display: "flex",
           flexDirection: "column",
           position: "relative",
-          cursor: "pointer"
+          cursor: "pointer",
+          border: `1px solid ${accentColor}25`,
+          height: `${cardHeight}px` // Fixed height based on category
         }}
       >
         <div style={{ 
           position: "relative", 
           width: "100%", 
           height: `${imageHeight}px`,
-          aspectRatio: aspectRatio
         }}>
           <Image
             src={images[currentImageIndex]}
@@ -248,7 +249,13 @@ export default function ItemCard({ item }: ItemCardProps) {
           </div>
         </div>
         
-        <div style={{ padding: "12px", flex: "1", display: "flex", flexDirection: "column" }}>
+        <div style={{ 
+          padding: "12px", 
+          flex: "1", 
+          display: "flex", 
+          flexDirection: "column",
+          height: `${cardHeight - imageHeight - 31}px` // Calculate content height (31px for footer)
+        }}>
           <h3 style={{
             fontSize: "14px",
             fontWeight: "600",
@@ -272,8 +279,7 @@ export default function ItemCard({ item }: ItemCardProps) {
           <div style={{
             flex: "1",
             overflow: "hidden",
-            position: "relative",
-            minHeight: `${descriptionLines * 1.3}em` // Set minimum height based on category
+            position: "relative"
           }}>
             <p style={{
               fontSize: "12px",
@@ -303,12 +309,13 @@ export default function ItemCard({ item }: ItemCardProps) {
         
         <div style={{
           padding: "8px 12px",
-          borderTop: `1px solid ${accentColor}10`,
+          borderTop: `1px solid ${accentColor}25`,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           fontSize: "10px",
-          color: "#6b7280"
+          color: "#6b7280",
+          height: "31px"
         }}>
           <span>{item.location}</span>
           <span>{new Date(item.createdAt).toLocaleDateString()}</span>

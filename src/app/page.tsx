@@ -289,45 +289,20 @@ export default function MarketplacePage() {
                     <p className="text-gray-500">Try adjusting your filters or search query</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 auto-rows-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {filteredItems.map((item) => {
                       // Determine column span based on item category
                       let colSpan = "";
-                      let rowSpan = "";
                       
-                      // Adjust column and row spans based on item category
-                      switch(item.category) {
-                        case 'Vehicles':
-                          colSpan = "col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2";
-                          rowSpan = "row-span-1";
-                          break;
-                        case 'Furniture':
-                          colSpan = "col-span-1 md:col-span-1 lg:col-span-1";
-                          rowSpan = "row-span-1";
-                          break;
-                        case 'Electronics':
-                          colSpan = "col-span-1";
-                          rowSpan = "row-span-1";
-                          break;
-                        case 'Photography':
-                          colSpan = "col-span-1 md:col-span-1";
-                          rowSpan = "row-span-1";
-                          break;
-                        case 'Sports':
-                          colSpan = "col-span-1 md:col-span-1";
-                          rowSpan = "row-span-1";
-                          break;
-                        case 'Books':
-                          colSpan = "col-span-1";
-                          rowSpan = "row-span-1";
-                          break;
-                        default:
-                          colSpan = "col-span-1";
-                          rowSpan = "row-span-1";
+                      // Only vehicles take up more space
+                      if (item.category === 'Vehicles') {
+                        colSpan = "col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-1";
+                      } else {
+                        colSpan = "col-span-1";
                       }
                       
                       return (
-                        <div key={item.id} className={`${colSpan} ${rowSpan} h-full`}>
+                        <div key={item.id} className={`${colSpan}`}>
                           <ItemCard item={item} />
                         </div>
                       );
